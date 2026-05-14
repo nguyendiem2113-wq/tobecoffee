@@ -11,7 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
-import { Trash2, Edit, Plus, Eye } from 'lucide-react';
+import { Trash2, Edit, Plus, Eye, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface FormField {
   id: string;
@@ -144,6 +144,37 @@ const ContactAdmin = () => {
     }
   };
 
+  const handleReorderField = async (index: number, direction: number) => {
+    const nextIndex = index + direction;
+    if (nextIndex < 0 || nextIndex >= formFields.length) return;
+
+    const reordered = [...formFields];
+    const [moved] = reordered.splice(index, 1);
+    reordered.splice(nextIndex, 0, moved);
+
+    const updatedFields = reordered.map((field, idx) => ({
+      ...field,
+      order_index: idx,
+    }));
+
+    setFormFields(updatedFields);
+
+    try {
+      await Promise.all(
+        updatedFields.map((field) =>
+          supabase
+            .from('contact_form_fields')
+            .update({ order_index: field.order_index })
+            .eq('id', field.id),
+        ),
+      );
+      toast.success('Field order updated');
+    } catch (error) {
+      toast.error('Failed to update order');
+      console.error(error);
+    }
+  };
+
   const handleDeleteMessage = async (id: string) => {
     if (!confirm('Are you sure you want to delete this message?')) return;
 
@@ -206,6 +237,22 @@ const ContactAdmin = () => {
                           </span>
                         </TableCell>
                         <TableCell className="space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={index === 0}
+                            onClick={() => handleReorderField(index, -1)}
+                          >
+                            <ArrowUp className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={index === formFields.length - 1}
+                            onClick={() => handleReorderField(index, 1)}
+                          >
+                            <ArrowDown className="h-4 w-4" />
+                          </Button>
                           <Button
                             variant="outline"
                             size="sm"
