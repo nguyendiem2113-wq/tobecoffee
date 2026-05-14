@@ -6,8 +6,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { FileUploadInput } from '@/components/FileUploadInput';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { uploadImage, uploadVideo, deleteFile } from '@/lib/storage';
 import { toast } from 'sonner';
 import { Trash2, Edit, Plus } from 'lucide-react';
 
@@ -123,38 +125,48 @@ const ProductsAdmin = () => {
     }
   };
 
-  const handleAddImage = () => {
-    const url = prompt('Enter image URL:');
+  const handleAddImage = async (file: File) => {
+    const url = await uploadImage(file, 'products/images');
     if (url) {
       setFormData({
         ...formData,
         images: [...formData.images, url],
       });
+      toast.success('Image uploaded');
     }
   };
 
-  const handleRemoveImage = (index: number) => {
-    setFormData({
-      ...formData,
-      images: formData.images.filter((_, i) => i !== index),
-    });
+  const handleRemoveImage = async (index: number) => {
+    const image = formData.images[index];
+    if (await deleteFile(image)) {
+      setFormData({
+        ...formData,
+        images: formData.images.filter((_, i) => i !== index),
+      });
+      toast.success('Image removed');
+    }
   };
 
-  const handleAddVideo = () => {
-    const url = prompt('Enter video URL:');
+  const handleAddVideo = async (file: File) => {
+    const url = await uploadVideo(file, 'products/videos');
     if (url) {
       setFormData({
         ...formData,
         videos: [...formData.videos, url],
       });
+      toast.success('Video uploaded');
     }
   };
 
-  const handleRemoveVideo = (index: number) => {
-    setFormData({
-      ...formData,
-      videos: formData.videos.filter((_, i) => i !== index),
-    });
+  const handleRemoveVideo = async (index: number) => {
+    const video = formData.videos[index];
+    if (await deleteFile(video)) {
+      setFormData({
+        ...formData,
+        videos: formData.videos.filter((_, i) => i !== index),
+      });
+      toast.success('Video removed');
+    }
   };
 
   return (
@@ -262,16 +274,18 @@ const ProductsAdmin = () => {
             </div>
 
             <div>
-              <div className="flex justify-between items-center mb-2">
-                <Label>Images</Label>
-                <Button variant="outline" size="sm" onClick={handleAddImage}>
-                  + Add Image
-                </Button>
-              </div>
-              <div className="space-y-2">
+              <FileUploadInput
+                label="Upload Images"
+                onFileSelect={handleAddImage}
+                accept="image/*"
+              />
+              <div className="space-y-2 mt-3">
                 {formData.images.map((img, idx) => (
                   <div key={idx} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                    <span className="text-sm truncate">{img}</span>
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <img src={img} alt="preview" className="h-8 w-8 rounded object-cover" />
+                      <span className="text-sm truncate">{img.split('/').pop()}</span>
+                    </div>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -285,16 +299,15 @@ const ProductsAdmin = () => {
             </div>
 
             <div>
-              <div className="flex justify-between items-center mb-2">
-                <Label>Videos</Label>
-                <Button variant="outline" size="sm" onClick={handleAddVideo}>
-                  + Add Video
-                </Button>
-              </div>
-              <div className="space-y-2">
+              <FileUploadInput
+                label="Upload Videos"
+                onFileSelect={handleAddVideo}
+                accept="video/*"
+              />
+              <div className="space-y-2 mt-3">
                 {formData.videos.map((vid, idx) => (
                   <div key={idx} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                    <span className="text-sm truncate">{vid}</span>
+                    <span className="text-sm truncate">{vid.split('/').pop()}</span>
                     <Button
                       variant="ghost"
                       size="sm"

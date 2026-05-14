@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { FileUploadInput } from '@/components/FileUploadInput';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { uploadImage } from '@/lib/storage';
 import { toast } from 'sonner';
 
 interface Homepage {
@@ -75,6 +77,17 @@ const HomepageAdmin = () => {
     }
   };
 
+  const handleCoverImageUpload = async (file: File) => {
+    const url = await uploadImage(file, 'homepage');
+    if (url) {
+      setFormData({
+        ...formData,
+        cover_image: url,
+      });
+      toast.success('Cover image uploaded');
+    }
+  };
+
   const handleSave = async () => {
     if (!homepage) {
       toast.error('Homepage not initialized');
@@ -120,9 +133,13 @@ const HomepageAdmin = () => {
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
-              <Label htmlFor="cover_image">Cover Image URL</Label>
+              <FileUploadInput
+                label="Cover Image"
+                onFileSelect={handleCoverImageUpload}
+                accept="image/*"
+              />
+              <p className="text-sm text-gray-600 mt-2">Or paste image URL below:</p>
               <Input
-                id="cover_image"
                 value={formData.cover_image}
                 onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
                 placeholder="https://example.com/image.jpg"
