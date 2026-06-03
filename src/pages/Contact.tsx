@@ -1,10 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
+import { getPageContent } from "@/lib/supabase";
+import { ContactContent, defaultContactContent } from "@/lib/content";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 
 const Contact = () => {
+  const [contactContent, setContactContent] = useState<ContactContent>(defaultContactContent);
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+
+  useEffect(() => {
+    async function fetchContact() {
+      const content = await getPageContent<ContactContent>("contact", defaultContactContent);
+      setContactContent(content);
+      setLoading(false);
+    }
+    fetchContact();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -12,12 +25,31 @@ const Contact = () => {
     setForm({ name: "", email: "", message: "" });
   };
 
+  if (loading) {
+    return (
+      <Layout>
+        <section className="py-24">
+          <div className="container mx-auto px-4 text-center">
+            <p className="text-muted-foreground">Đang tải nội dung...</p>
+          </div>
+        </section>
+      </Layout>
+    );
+  }
+
+  const iconMap: { [key: string]: React.ComponentType<{ size: number; className: string }> } = {
+    "Địa chỉ": MapPin,
+    "Hotline": Phone,
+    "Email": Mail,
+    "Giờ làm việc": Clock,
+  };
+
   return (
     <Layout>
       <section className="bg-foreground text-primary-foreground py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="font-heading text-4xl md:text-6xl font-bold mb-4">Liên hệ</h1>
-          <p className="font-body text-primary-foreground/70 text-lg">Chúng tôi luôn sẵn sàng lắng nghe bạn</p>
+          <h1 className="font-heading text-4xl md:text-6xl font-bold mb-4">{contactContent.hero.title}</h1>
+          <p className="font-body text-primary-foreground/70 text-lg">{contactContent.hero.subtitle}</p>
         </div>
       </section>
 
@@ -26,20 +58,18 @@ const Contact = () => {
           {/* Left - Info + Form */}
           <div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
-              {[
-                { icon: MapPin, label: "Địa chỉ", value: "Lô CN9 P, KCN, B'Lao, Lâm Đồng 66450, Việt Nam" },
-                { icon: Phone, label: "Hotline", value: "0909 806 947" },
-                { icon: Mail, label: "Email", value: "tobebaoloc@gmail.com" },
-                { icon: Clock, label: "Giờ làm việc", value: "T2 – T7: 8:00 – 18:00" },
-              ].map((item) => (
-                <div key={item.label} className="flex items-start gap-3">
-                  <item.icon className="text-primary mt-1 shrink-0" size={20} />
-                  <div>
-                    <p className="font-body text-xs text-muted-foreground uppercase tracking-wider">{item.label}</p>
-                    <p className="font-body text-sm font-medium">{item.value}</p>
+              {contactContent.info.map((item) => {
+                const Icon = iconMap[item.label];
+                return (
+                  <div key={item.label} className="flex items-start gap-3">
+                    {Icon && <Icon className="text-primary mt-1 shrink-0" size={20} />}
+                    <div>
+                      <p className="font-body text-xs text-muted-foreground uppercase tracking-wider">{item.label}</p>
+                      <p className="font-body text-sm font-medium">{item.value}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
