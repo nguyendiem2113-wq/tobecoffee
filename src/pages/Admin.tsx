@@ -384,6 +384,7 @@ const Admin = () => {
                     title="Bài viết"
                     items={blog.posts as unknown as Record<string, unknown>[]}
                     titleKey="title"
+                    searchKeys={["title", "topic", "excerpt"]}
                     onChange={(posts) => setBlog({ ...blog, posts: posts as unknown as BlogContent["posts"] })}
                     newItem={(items) => ({
                       id: Math.max(0, ...items.map((i) => Number(i.id) || 0)) + 1,
