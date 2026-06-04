@@ -3,7 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, LogOut, ExternalLink, Save } from "lucide-react";
+import { Loader2, LogOut, ExternalLink, Save, Trash2, Mail, MailOpen, Package, FileText, MessageSquare } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { supabase, getPageContent, updatePageContent } from "@/lib/supabase";
 import { AdminField, AdminArea, AdminImage } from "@/components/admin/AdminFields";
@@ -21,9 +21,10 @@ import {
   ContactContent,
 } from "@/lib/content";
 
-type TabId = "home" | "story" | "product" | "blog" | "contact" | "messages";
+type TabId = "dashboard" | "home" | "story" | "product" | "blog" | "contact" | "messages";
 
 const tabs: { id: TabId; label: string }[] = [
+  { id: "dashboard", label: "Tổng quan" },
   { id: "home", label: "Trang chủ" },
   { id: "story", label: "Giới thiệu" },
   { id: "product", label: "Sản phẩm" },
@@ -36,11 +37,12 @@ interface Message {
   id: string;
   form_data: Record<string, unknown>;
   created_at: string;
+  is_read?: boolean;
 }
 
 const Admin = () => {
-  const { session, loading: authLoading, signOut } = useAdminAuth();
-  const [tab, setTab] = useState<TabId>("home");
+  const { session, isAdmin, loading: authLoading, signOut } = useAdminAuth();
+  const [tab, setTab] = useState<TabId>("dashboard");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
