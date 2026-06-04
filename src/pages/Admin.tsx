@@ -344,6 +344,7 @@ const Admin = () => {
                     title="Sản phẩm"
                     items={product.products as unknown as Record<string, unknown>[]}
                     titleKey="name"
+                    searchKeys={["name", "category", "origin", "desc"]}
                     onChange={(products) => setProduct({ ...product, products: products as unknown as ProductPageContent["products"] })}
                     newItem={(items) => ({
                       id: Math.max(0, ...items.map((i) => Number(i.id) || 0)) + 1,
