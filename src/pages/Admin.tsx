@@ -271,6 +271,32 @@ const Admin = () => {
                   <AdminImage label="Ảnh nền số liệu" folder="home" value={home.statsImage} onChange={(v) => setHome({ ...home, statsImage: v })} />
                   <AdminField label="Tiêu đề mục Blog" value={home.blogTitle ?? ""} onChange={(v) => setHome({ ...home, blogTitle: v })} />
                 </Card>
+                <Card className="p-6">
+                  <ListEditor
+                    title="Bài viết nổi bật (trang chủ)"
+                    items={home.blogPosts as unknown as Record<string, unknown>[]}
+                    titleKey="title"
+                    searchKeys={["title", "topic", "excerpt"]}
+                    onChange={(blogPosts) => setHome({ ...home, blogPosts: blogPosts as unknown as IndexContent["blogPosts"] })}
+                    newItem={(items) => ({
+                      id: Math.max(0, ...items.map((i) => Number(i.id) || 0)) + 1,
+                      title: "Bài viết mới",
+                      excerpt: "",
+                      date: new Date().toISOString().slice(0, 10),
+                      topic: "Tin tức",
+                      body: "",
+                      imgUrl: "",
+                    })}
+                    fields={[
+                      { key: "title", label: "Tiêu đề", kind: "text" },
+                      { key: "topic", label: "Chủ đề", kind: "text" },
+                      { key: "date", label: "Ngày (YYYY-MM-DD)", kind: "text" },
+                      { key: "excerpt", label: "Tóm tắt", kind: "area" },
+                      { key: "body", label: "Nội dung", kind: "area" },
+                      { key: "imgUrl", label: "Ảnh", kind: "image", folder: "blog" },
+                    ]}
+                  />
+                </Card>
                 <SaveBar page="home" />
               </>
             )}
