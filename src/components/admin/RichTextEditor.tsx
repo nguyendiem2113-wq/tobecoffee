@@ -1,5 +1,5 @@
-import { useCallback } from "react";
-import { useEditor, EditorContent, type Editor } from "@tiptap/react";
+import { useCallback, useEffect } from "react";
+import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Image from "@tiptap/extension-image";
