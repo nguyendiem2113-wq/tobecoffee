@@ -135,7 +135,7 @@ const Index = () => {
                 </div>
                 <h3 className="font-heading text-lg font-bold mb-2 leading-snug">{post.title}</h3>
                 <p className="font-body text-sm text-muted-foreground mb-3 line-clamp-2">{post.excerpt}</p>
-                <Link to={`/blog/${post.id}`} className="font-body text-sm text-primary font-semibold hover:underline">
+                <Link to={`/blog/${itemPath(post)}`} className="font-body text-sm text-primary font-semibold hover:underline">
                   Đọc thêm →
                 </Link>
               </article>
