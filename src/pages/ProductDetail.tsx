@@ -2,14 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
+import { RichContent } from "@/components/RichContent";
 import { getPageContent } from "@/lib/supabase";
-import { defaultProductPageContent, ProductPageContent } from "@/lib/content";
+import { defaultProductPageContent, ProductPageContent, findBySlugOrId, itemPath } from "@/lib/content";
 import { Leaf, Award, Truck, Phone } from "lucide-react";
 
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const productId = Number(id ?? "");
   const [content, setContent] = useState<ProductPageContent>(defaultProductPageContent);
   const [loading, setLoading] = useState(true);
 
@@ -22,14 +22,14 @@ const ProductDetail = () => {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [productId]);
+  }, [id]);
 
 
   const products = content.products || [];
-  const product = useMemo(() => products.find((p) => p.id === productId) || null, [productId, products]);
+  const product = useMemo(() => findBySlugOrId(products, id), [id, products]);
   const related = useMemo(
-    () => products.filter((p) => p.id !== productId && (!product || p.category === product.category)).slice(0, 3),
-    [products, productId, product]
+    () => products.filter((p) => p.id !== product?.id && (!product || p.category === product.category)).slice(0, 3),
+    [products, product]
   );
 
   if (loading) {
