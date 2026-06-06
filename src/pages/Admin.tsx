@@ -280,6 +280,7 @@ const Admin = () => {
                     onChange={(blogPosts) => setHome({ ...home, blogPosts: blogPosts as unknown as IndexContent["blogPosts"] })}
                     newItem={(items) => ({
                       id: Math.max(0, ...items.map((i) => Number(i.id) || 0)) + 1,
+                      slug: "",
                       title: "Bài viết mới",
                       excerpt: "",
                       date: new Date().toISOString().slice(0, 10),
