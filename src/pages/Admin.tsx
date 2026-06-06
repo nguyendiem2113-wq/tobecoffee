@@ -384,11 +384,12 @@ const Admin = () => {
                     })}
                     fields={[
                       { key: "name", label: "Tên sản phẩm", kind: "text" },
+                      { key: "slug", label: "Đường dẫn (slug)", kind: "slug", from: "name" },
                       { key: "category", label: "Danh mục", kind: "text" },
                       { key: "origin", label: "Xuất xứ", kind: "text" },
                       { key: "price", label: "Giá (VNĐ)", kind: "number" },
                       { key: "desc", label: "Mô tả ngắn", kind: "area" },
-                      { key: "details", label: "Mô tả chi tiết", kind: "area" },
+                      { key: "details", label: "Mô tả chi tiết", kind: "rich", folder: "products" },
                       { key: "imgUrl", label: "Ảnh", kind: "image", folder: "products" },
                     ]}
                   />
