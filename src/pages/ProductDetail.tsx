@@ -134,7 +134,7 @@ const ProductDetail = () => {
         <section className="py-12 bg-secondary/40">
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 className="font-heading text-2xl font-bold mb-4">Mô tả chi tiết</h2>
-            <p className="font-body text-base leading-relaxed text-muted-foreground whitespace-pre-line">{product.details}</p>
+            <RichContent html={product.details} className="prose-lg" />
           </div>
         </section>
       )}
