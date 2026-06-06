@@ -417,6 +417,7 @@ const Admin = () => {
                     onChange={(posts) => setBlog({ ...blog, posts: posts as unknown as BlogContent["posts"] })}
                     newItem={(items) => ({
                       id: Math.max(0, ...items.map((i) => Number(i.id) || 0)) + 1,
+                      slug: "",
                       title: "Bài viết mới",
                       excerpt: "",
                       date: new Date().toISOString().slice(0, 10),
