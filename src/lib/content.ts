@@ -35,6 +35,7 @@ export type ProductCategory = {
 
 export type BlogPost = {
   id: number;
+  slug?: string;
   title: string;
   excerpt: string;
   date: string;
@@ -45,6 +46,7 @@ export type BlogPost = {
 
 export type ProductItem = {
   id: number;
+  slug?: string;
   name: string;
   desc: string;
   details: string;
