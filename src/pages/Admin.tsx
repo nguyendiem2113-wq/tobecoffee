@@ -375,6 +375,7 @@ const Admin = () => {
                     onChange={(products) => setProduct({ ...product, products: products as unknown as ProductPageContent["products"] })}
                     newItem={(items) => ({
                       id: Math.max(0, ...items.map((i) => Number(i.id) || 0)) + 1,
+                      slug: "",
                       name: "Sản phẩm mới",
                       desc: "",
                       details: "",
