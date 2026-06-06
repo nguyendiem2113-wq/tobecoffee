@@ -98,9 +98,7 @@ const BlogDetail = () => {
 
             <div className="rounded-3xl border border-border bg-card p-10 shadow-sm">
               <h2 className="font-heading text-2xl font-bold mb-4">Nội dung chính</h2>
-              <div className="space-y-6 text-base leading-relaxed text-muted-foreground whitespace-pre-line">
-                {post.body}
-              </div>
+              <RichContent html={post.body} className="prose-lg" />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
