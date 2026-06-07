@@ -84,6 +84,8 @@ export type StoryContent = {
 export type ProductPageContent = {
   hero: HeroSection;
   products: ProductItem[];
+  /** Hiển thị bộ lọc Xuất xứ trên trang /product (mặc định ẩn) */
+  showOrigin?: boolean;
 };
 
 export type BlogContent = {
@@ -221,6 +223,7 @@ export const defaultStoryContent: StoryContent = {
 };
 
 export const defaultProductPageContent: ProductPageContent = {
+  showOrigin: false,
   hero: {
     title: "Sản phẩm",
     subtitle: "Đa dạng lựa chọn cho mọi gu thưởng thức",
