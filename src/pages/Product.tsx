@@ -16,12 +16,14 @@ const Product = () => {
 
   const products: ProductItem[] = content.products || [];
 
+  const showOrigin = content.showOrigin === true;
+
   const filtered = useMemo(
     () =>
       products.filter(
-        (p) => (cat === "Tất cả" || p.category === cat) && (origin === "Tất cả" || p.origin === origin)
+        (p) => (cat === "Tất cả" || p.category === cat) && (!showOrigin || origin === "Tất cả" || p.origin === origin)
       ),
-    [cat, origin, products]
+    [cat, origin, products, showOrigin]
   );
 
   return (
@@ -53,21 +55,25 @@ const Product = () => {
                 ))}
               </ul>
 
-              <h3 className="font-heading text-lg font-bold mb-4">Xuất xứ</h3>
-              <ul className="space-y-2">
-                {origins.map((o) => (
-                  <li key={o}>
-                    <button
-                      onClick={() => setOrigin(o)}
-                      className={`font-body text-sm w-full text-left px-3 py-2 rounded-sm transition-colors ${
-                        origin === o ? "bg-primary text-primary-foreground font-semibold" : "hover:bg-secondary text-muted-foreground"
-                      }`}
-                    >
-                      {o}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              {showOrigin && (
+                <>
+                  <h3 className="font-heading text-lg font-bold mb-4">Xuất xứ</h3>
+                  <ul className="space-y-2">
+                    {origins.map((o) => (
+                      <li key={o}>
+                        <button
+                          onClick={() => setOrigin(o)}
+                          className={`font-body text-sm w-full text-left px-3 py-2 rounded-sm transition-colors ${
+                            origin === o ? "bg-primary text-primary-foreground font-semibold" : "hover:bg-secondary text-muted-foreground"
+                          }`}
+                        >
+                          {o}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
           </aside>
 
