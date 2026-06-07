@@ -15,6 +15,8 @@ export type FieldDef = {
   folder?: string;
   /** Cho kind "slug": key nguồn để tự tạo slug (vd: "name" hoặc "title") */
   from?: string;
+  /** Cho kind "image": kích thước đề xuất, vd "800 x 800" */
+  recommend?: string;
 };
 
 interface ListEditorProps<T> {
@@ -132,6 +134,7 @@ export function ListEditor<T extends Record<string, unknown>>({
                         <AdminImage
                           label={f.label}
                           folder={f.folder ?? "general"}
+                          recommend={f.recommend}
                           value={item[f.key] as string}
                           onChange={(v) => update(index, f.key, v)}
                         />
