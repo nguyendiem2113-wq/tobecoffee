@@ -8,6 +8,7 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { supabase, getPageContent, updatePageContent } from "@/lib/supabase";
 import { AdminField, AdminArea, AdminImage } from "@/components/admin/AdminFields";
 import { ListEditor } from "@/components/admin/ListEditor";
+import { Switch } from "@/components/ui/switch";
 import {
   defaultIndexContent,
   defaultStoryContent,
@@ -366,6 +367,16 @@ const Admin = () => {
                   <h2 className="font-heading text-lg font-bold">Hero</h2>
                   <AdminField label="Tiêu đề" value={product.hero.title} onChange={(v) => setProduct({ ...product, hero: { ...product.hero, title: v } })} />
                   <AdminField label="Phụ đề" value={product.hero.subtitle} onChange={(v) => setProduct({ ...product, hero: { ...product.hero, subtitle: v } })} />
+                  <div className="flex items-center justify-between rounded-md border border-border p-3">
+                    <div>
+                      <p className="text-sm font-semibold">Hiển thị bộ lọc Xuất xứ</p>
+                      <p className="text-xs text-muted-foreground">Bật để hiện cột lọc theo xuất xứ trên trang sản phẩm.</p>
+                    </div>
+                    <Switch
+                      checked={product.showOrigin === true}
+                      onCheckedChange={(checked) => setProduct({ ...product, showOrigin: checked })}
+                    />
+                  </div>
                 </Card>
                 <Card className="p-6">
                   <ListEditor
@@ -393,7 +404,7 @@ const Admin = () => {
                       { key: "price", label: "Giá (VNĐ)", kind: "number" },
                       { key: "desc", label: "Mô tả ngắn", kind: "area" },
                       { key: "details", label: "Mô tả chi tiết", kind: "rich", folder: "products" },
-                      { key: "imgUrl", label: "Ảnh", kind: "image", folder: "products" },
+                      { key: "imgUrl", label: "Ảnh", kind: "image", folder: "products", recommend: "800 x 800" },
                     ]}
                   />
                 </Card>
