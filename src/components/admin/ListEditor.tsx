@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Trash2, Plus, Copy, ChevronUp, ChevronDown, Search, Wand2 } from "lucide-react";
+import { Trash2, Plus, Copy, ChevronUp, ChevronDown, Search, Wand2, ChevronRight } from "lucide-react";
 import { AdminField, AdminArea, AdminImage } from "./AdminFields";
 import { RichTextEditor } from "./RichTextEditor";
 import { slugify } from "@/lib/content";
@@ -27,6 +27,7 @@ interface ListEditorProps<T> {
   newItem: (items: T[]) => T;
   titleKey?: string;
   searchKeys?: string[];
+  collapsible?: boolean;
 }
 
 export function ListEditor<T extends Record<string, unknown>>({
