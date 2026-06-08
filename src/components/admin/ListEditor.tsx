@@ -116,16 +116,38 @@ export function ListEditor<T extends Record<string, unknown>>({
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {items.map((item, index) => {
           if (!matches(item)) return null;
+          const isOpen = !collapsible || openIndices.has(index);
           return (
-            <Card key={index} className="p-5">
-              <div className="mb-3 flex items-center justify-between gap-2">
-                <span className="text-sm font-semibold text-muted-foreground">
-                  {titleKey ? String(item[titleKey] ?? `#${index + 1}`) : `#${index + 1}`}
-                </span>
-                <div className="flex items-center gap-0.5">
+            <Card key={index} className={isOpen ? "p-5" : "px-4 py-3"}>
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  {collapsible && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 shrink-0"
+                      onClick={() => toggle(index)}
+                      title={isOpen ? "Thu gọn" : "Mở rộng"}
+                    >
+                      {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                    </Button>
+                  )}
+                  <span className="text-sm font-semibold text-muted-foreground truncate">
+                    {titleKey ? String(item[titleKey] ?? `#${index + 1}`) : `#${index + 1}`}
+                  </span>
+                  {!isOpen && searchKeys && searchKeys.slice(0, 2).map((k) =>
+                    item[k] ? (
+                      <span key={k} className="hidden sm:inline ml-2 text-xs text-muted-foreground truncate max-w-[200px]">
+                        {String(item[k]).slice(0, 50)}
+                      </span>
+                    ) : null
+                  )}
+                </div>
+                <div className="flex items-center gap-0.5 shrink-0">
                   <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => move(index, -1)} disabled={index === 0} title="Lên">
                     <ChevronUp className="h-4 w-4" />
                   </Button>
@@ -140,75 +162,76 @@ export function ListEditor<T extends Record<string, unknown>>({
                   </Button>
                 </div>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {fields.map((f) => {
-                  const span = f.kind === "area" || f.kind === "image" || f.kind === "rich" || f.kind === "slug" ? "sm:col-span-2" : "";
-                  return (
-                    <div key={f.key} className={span}>
-                      {f.kind === "text" && (
-                        <AdminField label={f.label} value={item[f.key] as string} onChange={(v) => update(index, f.key, v)} />
-                      )}
-                      {f.kind === "number" && (
-                        <AdminField
-                          label={f.label}
-                          type="number"
-                          value={item[f.key] as number}
-                          onChange={(v) => update(index, f.key, Number(v) || 0)}
-                        />
-                      )}
-                      {f.kind === "area" && (
-                        <AdminArea label={f.label} value={item[f.key] as string} onChange={(v) => update(index, f.key, v)} />
-                      )}
-                      {f.kind === "image" && (
-                        <AdminImage
-                          label={f.label}
-                          folder={f.folder ?? "general"}
-                          recommend={f.recommend}
-                          value={item[f.key] as string}
-                          onChange={(v) => update(index, f.key, v)}
-                        />
-                      )}
-                      {f.kind === "rich" && (
-                        <RichTextEditor
-                          label={f.label}
-                          folder={f.folder ?? "content"}
-                          value={item[f.key] as string}
-                          onChange={(v) => update(index, f.key, v)}
-                        />
-                      )}
-                      {f.kind === "slug" && (
-                        <div className="space-y-1.5">
-                          <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                            {f.label}
-                          </Label>
-                          <div className="flex items-center gap-2">
-                            <span className="select-none text-sm text-muted-foreground">/</span>
-                            <Input
-                              value={(item[f.key] as string) ?? ""}
-                              placeholder="duong-dan-than-thien"
-                              onChange={(e) => update(index, f.key, slugify(e.target.value))}
-                            />
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              className="shrink-0"
-                              onClick={() => update(index, f.key, slugify(String(item[f.from ?? "title"] ?? "")))}
-                              title="Tạo tự động từ tiêu đề"
-                            >
-                              <Wand2 className="mr-1.5 h-3.5 w-3.5" /> Tạo
-                            </Button>
+              {isOpen && (
+                <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                  {fields.map((f) => {
+                    const span = f.kind === "area" || f.kind === "image" || f.kind === "rich" || f.kind === "slug" ? "sm:col-span-2" : "";
+                    return (
+                      <div key={f.key} className={span}>
+                        {f.kind === "text" && (
+                          <AdminField label={f.label} value={item[f.key] as string} onChange={(v) => update(index, f.key, v)} />
+                        )}
+                        {f.kind === "number" && (
+                          <AdminField
+                            label={f.label}
+                            type="number"
+                            value={item[f.key] as number}
+                            onChange={(v) => update(index, f.key, Number(v) || 0)}
+                          />
+                        )}
+                        {f.kind === "area" && (
+                          <AdminArea label={f.label} value={item[f.key] as string} onChange={(v) => update(index, f.key, v)} />
+                        )}
+                        {f.kind === "image" && (
+                          <AdminImage
+                            label={f.label}
+                            folder={f.folder ?? "general"}
+                            recommend={f.recommend}
+                            value={item[f.key] as string}
+                            onChange={(v) => update(index, f.key, v)}
+                          />
+                        )}
+                        {f.kind === "rich" && (
+                          <RichTextEditor
+                            label={f.label}
+                            folder={f.folder ?? "content"}
+                            value={item[f.key] as string}
+                            onChange={(v) => update(index, f.key, v)}
+                          />
+                        )}
+                        {f.kind === "slug" && (
+                          <div className="space-y-1.5">
+                            <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                              {f.label}
+                            </Label>
+                            <div className="flex items-center gap-2">
+                              <span className="select-none text-sm text-muted-foreground">/</span>
+                              <Input
+                                value={(item[f.key] as string) ?? ""}
+                                placeholder="duong-dan-than-thien"
+                                onChange={(e) => update(index, f.key, slugify(e.target.value))}
+                              />
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="shrink-0"
+                                onClick={() => update(index, f.key, slugify(String(item[f.from ?? "title"] ?? "")))}
+                                title="Tạo tự động từ tiêu đề"
+                              >
+                                <Wand2 className="mr-1.5 h-3.5 w-3.5" /> Tạo
+                              </Button>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              Để trống sẽ dùng số ID. Đường dẫn nên ngắn gọn, không dấu.
+                            </p>
                           </div>
-                          <p className="text-xs text-muted-foreground">
-                            Để trống sẽ dùng số ID. Đường dẫn nên ngắn gọn, không dấu.
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </Card>
           );
         })}
