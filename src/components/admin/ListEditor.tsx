@@ -38,18 +38,38 @@ export function ListEditor<T extends Record<string, unknown>>({
   newItem,
   titleKey,
   searchKeys,
+  collapsible,
 }: ListEditorProps<T>) {
   const [query, setQuery] = useState("");
+  const [openIndices, setOpenIndices] = useState<Set<number>>(new Set());
 
   const update = (index: number, key: string, value: unknown) => {
     onChange(items.map((it, i) => (i === index ? { ...it, [key]: value } : it)));
   };
   const remove = (index: number) => onChange(items.filter((_, i) => i !== index));
-  const add = () => onChange([...items, newItem(items)]);
+  const add = () => {
+    const next = [...items, newItem(items)];
+    onChange(next);
+    if (collapsible) {
+      setOpenIndices((prev) => {
+        const s = new Set(prev);
+        s.add(next.length - 1);
+        return s;
+      });
+    }
+  };
   const duplicate = (index: number) => {
     const copy = { ...items[index] } as Record<string, unknown>;
     if ("id" in copy) copy.id = Math.max(0, ...items.map((i) => Number(i.id) || 0)) + 1;
-    onChange([...items.slice(0, index + 1), copy as T, ...items.slice(index + 1)]);
+    const next = [...items.slice(0, index + 1), copy as T, ...items.slice(index + 1)];
+    onChange(next);
+    if (collapsible) {
+      setOpenIndices((prev) => {
+        const s = new Set(prev);
+        s.add(index + 1);
+        return s;
+      });
+    }
   };
   const move = (index: number, dir: -1 | 1) => {
     const target = index + dir;
@@ -57,6 +77,14 @@ export function ListEditor<T extends Record<string, unknown>>({
     const next = [...items];
     [next[index], next[target]] = [next[target], next[index]];
     onChange(next);
+  };
+  const toggle = (index: number) => {
+    setOpenIndices((prev) => {
+      const s = new Set(prev);
+      if (s.has(index)) s.delete(index);
+      else s.add(index);
+      return s;
+    });
   };
 
   const keys = searchKeys ?? (titleKey ? [titleKey] : []);
