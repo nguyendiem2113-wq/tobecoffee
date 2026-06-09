@@ -118,15 +118,21 @@ const Story = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {storyContent.services.map((s) => (
               <div key={s.title} className="bg-card border border-border rounded-sm overflow-hidden group">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={s.imgUrl || "https://via.placeholder.com/800x600"}
-                    alt={s.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                    width={800}
-                    height={600}
-                  />
+                <div className="aspect-[4/3] overflow-hidden bg-secondary">
+                  {s.imgUrl ? (
+                    <img
+                      src={s.imgUrl}
+                      alt={s.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      width={800}
+                      height={600}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
+                      Chưa có ảnh
+                    </div>
+                  )}
                 </div>
                 <div className="p-6">
                   <p className="font-body text-[10px] uppercase tracking-widest text-primary font-semibold mb-2">
