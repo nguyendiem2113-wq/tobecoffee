@@ -74,13 +74,13 @@ const Story = () => {
         <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="overflow-hidden rounded-sm">
             <img
-              src={storyContent.hero.imageUrl || "https://via.placeholder.com/960x1280"}
-              alt="Thu hoạch cà phê"
-              className="w-full h-[500px] object-cover grayscale hover:grayscale-0 transition-all duration-700"
-              loading="lazy"
-              width={960}
-              height={1280}
-            />
+  src={storyContent.hero.imageUrl || "https://via.placeholder.com/960x1280"}
+  alt="Thu hoạch cà phê"
+  className="w-full h-[500px] object-cover transition-all duration-700"
+  loading="lazy"
+  width={960}
+  height={1280}
+/>
           </div>
           <div>
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-6 leading-tight">
