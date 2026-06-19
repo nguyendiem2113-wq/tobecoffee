@@ -160,7 +160,39 @@ const Index = () => {
           </div>
         </section>
       )}
-      {/* BLOG */}
+     
+      {/* STATS */}
+      {home.stats.length > 0 && (
+        <section className="relative py-24 overflow-hidden">
+          {home.statsImage && (
+            <img
+              src={home.statsImage}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          )}
+
+          <div className="absolute inset-0 bg-black/70" />
+
+          <div className="relative z-10 container mx-auto px-4">
+            <div className="grid md:grid-cols-3 gap-12 text-center">
+              {home.stats.map((s) => (
+                <div key={`${s.number}-${s.label}`}>
+                  <p className="text-5xl font-bold text-white">
+                    {s.number}
+                  </p>
+
+                  <p className="text-white/70 mt-4">
+                    {s.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+      
+       {/* BLOG */}
 {home.blogPosts.length > 0 && (
   <section className="py-20">
     <div className="container mx-auto px-4">
@@ -204,38 +236,6 @@ const Index = () => {
     </div>
   </section>
 )}
-      {/* STATS */}
-      {home.stats.length > 0 && (
-        <section className="relative py-24 overflow-hidden">
-          {home.statsImage && (
-            <img
-              src={home.statsImage}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          )}
-
-          <div className="absolute inset-0 bg-black/70" />
-
-          <div className="relative z-10 container mx-auto px-4">
-            <div className="grid md:grid-cols-3 gap-12 text-center">
-              {home.stats.map((s) => (
-                <div key={`${s.number}-${s.label}`}>
-                  <p className="text-5xl font-bold text-white">
-                    {s.number}
-                  </p>
-
-                  <p className="text-white/70 mt-4">
-                    {s.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-      
-      
     </Layout>
   );
 };
