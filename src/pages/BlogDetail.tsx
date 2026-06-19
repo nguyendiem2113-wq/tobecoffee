@@ -13,9 +13,15 @@ const BlogDetail = () => {
 
   useEffect(() => {
     async function fetchBlog() {
-      const data = await getPageContent<BlogContent>("blog", defaultBlogContent);
-      setBlogContent(data);
-      setLoading(false);
+      try {
+        // ✅ ĐÃ SỬA LỖI Ở ĐÂY: Dùng ?? thay vì truyền làm tham số thứ 2
+        const data = (await getPageContent<BlogContent>("blog")) ?? defaultBlogContent;
+        setBlogContent(data);
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu blog:", error);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchBlog();
   }, []);
@@ -23,7 +29,6 @@ const BlogDetail = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
-
 
   const post = useMemo(
     () => findBySlugOrId(blogContent.posts, id),
