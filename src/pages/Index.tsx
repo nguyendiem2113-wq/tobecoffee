@@ -132,7 +132,7 @@ const Index = () => {
               {home.productCategories.map((cat) => (
                 <Link
                   key={cat.title}
-                  to={`/product/${slugify(cat.label)}`}
+                  to={`/product/detail/${slugify(cat.label)}`}
                   className="group relative overflow-hidden aspect-[4/3]"
                 >
                   {cat.imgUrl && (
