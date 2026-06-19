@@ -51,13 +51,17 @@ const ProductDetail = () => {
 
   const products = content.products || [];
 
+  // ✅ CÁCH 1: Lấy mảng từ content.products và dùng nội bộ trong các hook
   const product = useMemo(
-    () => findBySlugOrId(products, id),
-    [products, id]
+    () => findBySlugOrId(content.products || [], id),
+    [content.products, id] // Theo dõi trực tiếp content.products
   );
 
   const related = useMemo(() => {
     if (!product) return [];
+    
+    // Khởi tạo mảng ở đây
+    const products = content.products || [];
 
     return products
       .filter(
@@ -66,7 +70,7 @@ const ProductDetail = () => {
           p.category === product.category
       )
       .slice(0, 3);
-  }, [products, product]);
+  }, [content.products, product]); // Đổi từ products -> content.products
 
   if (loading) {
     return (
