@@ -24,10 +24,7 @@ const Contact = () => {
 
   useEffect(() => {
     async function fetchContact() {
-      const content = await getPageContent<ContactContent>(
-        "contact",
-        defaultContactContent
-      );
+      const content = (await getPageContent<ContactContent>("contact")) ?? defaultContactContent;
 
       setContactContent(content);
       setLoading(false);

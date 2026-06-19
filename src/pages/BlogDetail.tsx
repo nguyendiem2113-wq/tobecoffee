@@ -13,9 +13,15 @@ const BlogDetail = () => {
 
   useEffect(() => {
     async function fetchBlog() {
-      const data = await getPageContent<BlogContent>("blog", defaultBlogContent);
-      setBlogContent(data);
-      setLoading(false);
+      try {
+        // ✅ ĐÃ SỬA LỖI Ở ĐÂY: Dùng ?? thay vì truyền làm tham số thứ 2
+        const data = (await getPageContent<BlogContent>("blog")) ?? defaultBlogContent;
+        setBlogContent(data);
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu blog:", error);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchBlog();
   }, []);
@@ -23,7 +29,6 @@ const BlogDetail = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
-
 
   const post = useMemo(
     () => findBySlugOrId(blogContent.posts, id),
@@ -101,16 +106,7 @@ const BlogDetail = () => {
               <RichContent html={post.body} className="prose-lg" />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
-                <h3 className="font-semibold text-lg">Chủ đề</h3>
-                <p className="mt-2 text-muted-foreground">{post.topic}</p>
-              </div>
-              <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
-                <h3 className="font-semibold text-lg">Gợi ý đọc khác</h3>
-                <p className="mt-2 text-muted-foreground">Xem những bài viết mới nhất và phù hợp với chủ đề này.</p>
-              </div>
-            </div>
+            
           </article>
 
           <aside className="space-y-6">

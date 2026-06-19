@@ -9,7 +9,8 @@ const Story = () => {
 
   useEffect(() => {
     async function fetchStory() {
-      const content = await getPageContent<StoryContent>("story", defaultStoryContent);
+      // ✅ ĐÃ SỬA LỖI Ở ĐÂY: Dùng ?? thay vì truyền làm tham số thứ 2
+      const content = (await getPageContent<StoryContent>("story")) ?? defaultStoryContent;
       setStoryContent(content);
       setLoading(false);
     }
@@ -74,13 +75,13 @@ const Story = () => {
         <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="overflow-hidden rounded-sm">
             <img
-  src={storyContent.hero.imageUrl || "https://via.placeholder.com/960x1280"}
-  alt="Thu hoạch cà phê"
-  className="w-full h-[500px] object-cover transition-all duration-700"
-  loading="lazy"
-  width={960}
-  height={1280}
-/>
+              src={storyContent.hero.imageUrl || "https://via.placeholder.com/960x1280"}
+              alt="Thu hoạch cà phê"
+              className="w-full h-[500px] object-cover transition-all duration-700"
+              loading="lazy"
+              width={960}
+              height={1280}
+            />
           </div>
           <div>
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-6 leading-tight">
@@ -127,9 +128,7 @@ const Story = () => {
                   </p>
                   <h3 className="font-heading text-lg font-bold mb-3">{s.title}</h3>
                   <p className="font-body text-sm text-muted-foreground leading-relaxed mb-4">{s.desc}</p>
-                  <span className="font-body text-sm text-primary font-semibold cursor-pointer hover:underline">
-                    ▶ Xem thêm
-                  </span>
+                  <span className="font-body text-sm text-primary font-semibold cursor-pointer hover:underline"></span>
                 </div>
               </div>
             ))}

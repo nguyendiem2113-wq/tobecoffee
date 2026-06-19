@@ -45,7 +45,7 @@ export type BlogPost = {
 };
 
 export type ProductItem = {
-  id: number;
+  id: string;
   slug?: string;
   name: string;
   desc: string;
@@ -230,76 +230,7 @@ export const defaultProductPageContent: ProductPageContent = {
     imageUrl: "",
   },
   products: [
-    {
-      id: 1,
-      name: "Tobe Pulse Bold",
-      desc: "Signature Blend — Honey, Prunes, Vanilla, Chocolate",
-      details: "Hương thơm mật ong, mận khô và socola đậm đà. Pha phin hoặc máy đều giữ được độ cân bằng tuyệt vời.",
-      category: "Cà phê hạt rang",
-      origin: "Bảo Lộc",
-      price: 189000,
-      imgUrl: productPulseBold,
-    },
-    {
-      id: 2,
-      name: "Tobe Flow",
-      desc: "Everyday Blend — Vanilla, Raisins, Cognac, Chocolate",
-      details: "Blend hàng ngày nhẹ nhàng với hương trái cây và vani, thích hợp cho những buổi sáng thư thái.",
-      category: "Cà phê hạt rang",
-      origin: "Bảo Lộc",
-      price: 169000,
-      imgUrl: productPulseBold,
-    },
-    {
-      id: 3,
-      name: "Tobe Pause - Drip Bag",
-      desc: "Cà phê túi lọc tiện lợi — Thảnh thơi từng phút giây",
-      details: "Drip bag dễ dùng, giữ trọn hương thơm và độ tươi mới của cà phê rang xay mộc mạc.",
-      category: "Cà phê túi lọc",
-      origin: "Bảo Lộc",
-      price: 120000,
-      imgUrl: productPauseDrip,
-    },
-    {
-      id: 4,
-      name: "Tobe Brew Bold 500g",
-      desc: "Cà phê hạt rang nguyên chất — 100% Coffee Viet Nam",
-      details: "Hạt rang nguyên chất, phù hợp pha phin, pha máy và cold brew, mang đến vị đậm đà, hậu ngọt lâu.",
-      category: "Cà phê hạt rang",
-      origin: "Bảo Lộc",
-      price: 210000,
-      imgUrl: productBrewBold,
-    },
-    {
-      id: 5,
-      name: "Tobe Drip Bag",
-      desc: "100% Coffee Viet Nam — Drip Bag tiện lợi",
-      details: "Thiết kế túi lọc tiện lợi, dễ mang theo, giữ được vị thanh tao và mùi thơm đặc trưng Việt Nam.",
-      category: "Cà phê túi lọc",
-      origin: "Bảo Lộc",
-      price: 95000,
-      imgUrl: productDripBag,
-    },
-    {
-      id: 6,
-      name: "Tobe Pause - Hộp Quà",
-      desc: "Tobe Pause Thảnh Thơi — Brew Bold Be TOBE",
-      details: "Hộp quà thiết kế đẹp, gồm lựa chọn drip bag và thức quà cà phê sang trọng cho tặng biếu.",
-      category: "Cà phê túi lọc",
-      origin: "Bảo Lộc",
-      price: 250000,
-      imgUrl: productPauseBox,
-    },
-    {
-      id: 7,
-      name: "Tobe Core",
-      desc: "Cà phê hạt rang — Cold Brew, Pour Over, Pha Phin, Pha Máy",
-      details: "Hạt cà phê cơ bản nhất của Tobe, cân bằng giữa độ đậm và hậu vị, phù hợp mọi phong cách pha chế.",
-      category: "Cà phê hạt rang",
-      origin: "Bảo Lộc",
-      price: 195000,
-      imgUrl: productCore,
-    },
+   
   ],
 };
 
@@ -355,10 +286,11 @@ export const defaultContactContent: ContactContent = {
 
 export const formatPrice = (price: number) => price.toLocaleString("vi-VN") + "₫";
 
-export const getProductById = (products: ProductItem[], id: number) =>
+export const getProductById = (products: ProductItem[], id: string) =>
   products.find((product) => product.id === id);
 
 /** Tạo slug thân thiện từ chuỗi tiếng Việt. */
+/** Tìm item theo slug hoặc theo id số (tương thích đường dẫn cũ). */
 export const slugify = (input: string): string =>
   (input || "")
     .normalize("NFD")
@@ -371,21 +303,36 @@ export const slugify = (input: string): string =>
     .replace(/[\s-]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-/** Tìm item theo slug hoặc theo id số (tương thích đường dẫn cũ). */
-export function findBySlugOrId<T extends { id: number; slug?: string }>(
-  items: T[],
-  param: string | undefined
-): T | null {
-  if (!param) return null;
-  const bySlug = items.find((it) => it.slug && it.slug === param);
-  if (bySlug) return bySlug;
-  const numeric = Number(param);
-  if (!Number.isNaN(numeric)) return items.find((it) => it.id === numeric) ?? null;
-  return null;
-}
+export const itemPath = (
+  item: ProductItem | BlogPost
+): string => {
+  if (item.slug?.trim()) {
+    return item.slug;
+  }
 
-/** Đường dẫn ưu tiên slug, fallback về id. */
-export const itemPath = (item: { id: number; slug?: string }): string =>
-  item.slug && item.slug.length > 0 ? item.slug : String(item.id);
+  if ("name" in item) {
+    return slugify(item.name);
+  }
+
+  return slugify(item.title);
+};
+
+export function findBySlugOrId<T extends ProductItem | BlogPost>(
+  items: T[],
+  param?: string
+): T | undefined {
+  if (!param) return undefined;
+
+  return items.find((item) => {
+    const isIdMatch = String(item.id) === param;
+    const isSlugMatch = item.slug === param;
+    
+    // Kiểm tra xem item là ProductItem (có name) hay BlogPost (có title)
+    const nameOrTitle = "name" in item ? item.name : item.title;
+    const isGeneratedSlugMatch = slugify(nameOrTitle) === param;
+
+    return isIdMatch || isSlugMatch || isGeneratedSlugMatch;
+  });
+}
 
 
