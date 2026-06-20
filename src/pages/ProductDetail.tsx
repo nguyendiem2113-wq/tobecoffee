@@ -28,19 +28,19 @@ const ProductDetail = () => {
   });
 
   useEffect(() => {
-  getPageContent<ProductPageContent>("product")
-    .then((data) => {
-      if (data) {
-        setContent(data);
-      }
+    getPageContent<ProductPageContent>("product")
+      .then((data) => {
+        if (data) {
+          setContent(data);
+        }
 
-      setLoading(false);
-    })
-    .catch((err) => {
-      console.error(err);
-      setLoading(false);
-    });
-}, []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
 
   useEffect(() => {
     window.scrollTo({
@@ -49,18 +49,14 @@ const ProductDetail = () => {
     });
   }, [id]);
 
-  const products = content.products || [];
-
-  // ✅ CÁCH 1: Lấy mảng từ content.products và dùng nội bộ trong các hook
   const product = useMemo(
     () => findBySlugOrId(content.products || [], id),
-    [content.products, id] // Theo dõi trực tiếp content.products
+    [content.products, id]
   );
 
   const related = useMemo(() => {
     if (!product) return [];
     
-    // Khởi tạo mảng ở đây
     const products = content.products || [];
 
     return products
@@ -69,8 +65,22 @@ const ProductDetail = () => {
           p.id !== product.id &&
           p.category === product.category
       )
-      .slice(0, 3);
-  }, [content.products, product]); // Đổi từ products -> content.products
+      .slice(0, 6);
+  }, [content.products, product]);
+
+  const otherProducts = useMemo(() => {
+    if (!product) return [];
+    
+    const products = content.products || [];
+
+    return products
+      .filter(
+        (p) =>
+          p.id !== product.id &&
+          p.category !== product.category
+      )
+      .slice(0, 8);
+  }, [content.products, product]);
 
   if (loading) {
     return (
@@ -112,26 +122,26 @@ const ProductDetail = () => {
     <Layout>
       <section className="bg-foreground text-primary-foreground py-16">
         <div className="container mx-auto px-4">
-          <nav className="text-sm text-primary-foreground/60 mb-4">
+          <nav className="text-sm text-primary-foreground/60 mb-4 flex flex-wrap gap-2 items-center">
             <Link
               to="/"
-              className="hover:text-primary-foreground"
+              className="hover:text-primary-foreground whitespace-nowrap"
             >
               Trang chủ
             </Link>
 
-            {" / "}
+            <span className="shrink-0">/</span>
 
             <Link
               to={`/product/${slugify(product.category)}`}
-              className="hover:text-primary-foreground"
+              className="hover:text-primary-foreground whitespace-nowrap"
             >
               {product.category}
             </Link>
 
-            {" / "}
+            <span className="shrink-0">/</span>
 
-            <span className="text-primary-foreground/90">
+            <span className="text-primary-foreground/90 truncate">
               {product.name}
             </span>
           </nav>
@@ -140,12 +150,12 @@ const ProductDetail = () => {
 
       <section className="py-16">
         <div className="container mx-auto px-4 grid gap-12 lg:grid-cols-2 items-start">
-          <div className="overflow-hidden rounded-3xl bg-secondary shadow-sm">
+          <div className="aspect-square overflow-hidden rounded-3xl bg-secondary shadow-sm p-8 flex items-center justify-center">
             {product.imgUrl && (
               <img
                 src={product.imgUrl}
                 alt={product.name}
-                className="w-full object-cover"
+                className="w-full h-full object-contain drop-shadow-xl"
                 loading="lazy"
               />
             )}
@@ -271,39 +281,94 @@ const ProductDetail = () => {
       {related.length > 0 && (
         <section className="py-16">
           <div className="container mx-auto px-4">
-            <h2 className="font-heading text-2xl font-bold mb-8 text-center">
+            <h2 className="font-heading text-2xl font-bold mb-8">
               Sản phẩm liên quan
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="flex flex-nowrap gap-6 overflow-x-auto snap-x snap-mandatory pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {related.map((p) => (
                 <Link
                   key={p.id}
                   to={`/product/detail/${itemPath(p)}`}
-                  className="group bg-card border border-border rounded-sm overflow-hidden hover:shadow-lg transition-shadow"
+                  className="w-[280px] shrink-0 snap-start group bg-card border border-border rounded-sm hover:shadow-lg transition-shadow flex flex-col"
                 >
-                  <div className="aspect-square bg-secondary overflow-hidden">
+                  <div className="relative w-full aspect-square bg-secondary">
                     {p.imgUrl && (
                       <img
                         src={p.imgUrl}
                         alt={p.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="absolute inset-0 w-full h-full object-contain p-6 group-hover:scale-105 transition-transform duration-500 drop-shadow-md"
                         loading="lazy"
                       />
                     )}
                   </div>
 
-                  <div className="p-4">
+                  <div className="p-5 flex-1 flex flex-col">
                     <h3 className="font-heading text-base font-bold leading-snug">
                       {p.name}
                     </h3>
 
-                    <p className="font-body text-xs text-muted-foreground line-clamp-2 mt-1">
+                    <p className="font-body text-xs text-muted-foreground line-clamp-2 mt-2">
                       {p.desc}
                     </p>
                   </div>
                 </Link>
               ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {otherProducts.length > 0 && (
+        <section className="py-16 border-t border-border bg-muted/20">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="font-heading text-2xl font-bold">
+                Khám phá thêm hương vị khác
+              </h2>
+              <Button variant="link" asChild className="hidden sm:inline-flex">
+                <Link to="/product">Xem tất cả →</Link>
+              </Button>
+            </div>
+
+            <div className="flex flex-nowrap gap-6 overflow-x-auto snap-x snap-mandatory pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              {otherProducts.map((p) => (
+                <Link
+                  key={p.id}
+                  to={`/product/detail/${itemPath(p)}`}
+                  className="w-[280px] shrink-0 snap-start group bg-card border border-border rounded-sm hover:shadow-lg transition-shadow flex flex-col"
+                >
+                  <div className="relative w-full aspect-square bg-secondary">
+                    {p.imgUrl && (
+                      <img
+                        src={p.imgUrl}
+                        alt={p.name}
+                        className="absolute inset-0 w-full h-full object-contain p-6 group-hover:scale-105 transition-transform duration-500 drop-shadow-md"
+                        loading="lazy"
+                      />
+                    )}
+                  </div>
+
+                  <div className="p-5 flex-1 flex flex-col">
+                    <p className="font-body text-[10px] uppercase tracking-widest text-primary mb-1.5">
+                      {p.category}
+                    </p>
+                    <h3 className="font-heading text-base font-bold leading-snug">
+                      {p.name}
+                    </h3>
+
+                    <p className="font-body text-xs text-muted-foreground line-clamp-2 mt-2">
+                      {p.desc}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            
+            <div className="mt-8 text-center sm:hidden">
+              <Button variant="outline" className="w-full" asChild>
+                <Link to="/product">Xem tất cả sản phẩm</Link>
+              </Button>
             </div>
           </div>
         </section>
