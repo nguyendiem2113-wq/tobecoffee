@@ -110,18 +110,44 @@ const BlogDetail = () => {
           </article>
 
           <aside className="space-y-6">
-            <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
-              <h3 className="font-heading text-xl font-bold mb-4">Bài viết liên quan</h3>
-              <div className="space-y-4">
+            <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+              <h3 className="font-heading text-xl font-bold mb-5">Bài viết liên quan</h3>
+              <div className="space-y-5">
                 {recommendations.map((item) => (
-                  <Link key={item.id} to={`/blog/${itemPath(item)}`} className="block rounded-3xl border border-border bg-background p-4 hover:border-primary hover:bg-primary/5 transition-colors">
-                    <p className="text-xs uppercase tracking-[0.24em] text-primary/80 mb-2">{item.topic}</p>
-                    <h4 className="font-semibold text-lg leading-snug mb-2">{item.title}</h4>
-                    <p className="text-sm text-muted-foreground line-clamp-2">{item.excerpt}</p>
+                  <Link
+                    key={item.id}
+                    to={`/blog/${itemPath(item)}`}
+                    className="group block overflow-hidden rounded-2xl border border-border bg-background transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg"
+                  >
+                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-secondary">
+                      {item.imgUrl ? (
+                        <img
+                          src={item.imgUrl}
+                          alt={item.title}
+                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-2xl font-semibold text-primary/20">
+                          TOBE
+                        </div>
+                      )}
+                      <span className="absolute left-3 top-3 rounded-full bg-card/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary backdrop-blur">
+                        {item.topic}
+                      </span>
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-semibold text-base leading-snug mb-1.5 line-clamp-2 group-hover:text-primary transition-colors">
+                        {item.title}
+                      </h4>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{item.excerpt}</p>
+                      <span className="text-xs text-muted-foreground">{item.date}</span>
+                    </div>
                   </Link>
                 ))}
               </div>
             </div>
+
 
             <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
               <h3 className="font-heading text-xl font-bold mb-4">Khám phá thêm</h3>
