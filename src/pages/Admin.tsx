@@ -318,8 +318,13 @@ setContact(c ?? defaultContactContent);
                   <h2 className="font-heading text-lg font-bold">Hero</h2>
                   <AdminField label="Tiêu đề" value={story.hero.title} onChange={(v) => setStory({ ...story, hero: { ...story.hero, title: v } })} />
                   <AdminField label="Phụ đề" value={story.hero.subtitle} onChange={(v) => setStory({ ...story, hero: { ...story.hero, subtitle: v } })} />
-                  <AdminImage label="Ảnh" folder="story" value={story.hero.imageUrl} onChange={(v) => setStory({ ...story, hero: { ...story.hero, imageUrl: v } })} />
+                  <AdminImage label="Ảnh" folder="story" recommend="960 x 1280" value={story.hero.imageUrl} onChange={(v) => setStory({ ...story, hero: { ...story.hero, imageUrl: v } })} />
                   <AdminArea label="Mục tiêu (trích dẫn)" value={story.goal ?? ""} onChange={(v) => setStory({ ...story, goal: v })} />
+                </Card>
+                <Card className="space-y-4 p-6">
+                  <h2 className="font-heading text-lg font-bold">Tại Sao Chọn TOBE</h2>
+                  <AdminField label="Tiêu đề" value={story.why?.title ?? ""} onChange={(v) => setStory({ ...story, why: { ...story.why, title: v } })} />
+                  <AdminArea label="Nội dung" value={story.why?.body ?? ""} onChange={(v) => setStory({ ...story, why: { ...story.why, body: v } })} />
                 </Card>
                 <Card className="p-6">
                   <ListEditor
@@ -359,7 +364,7 @@ setContact(c ?? defaultContactContent);
                       { key: "label", label: "Nhãn", kind: "text" },
                       { key: "title", label: "Tiêu đề", kind: "text" },
                       { key: "desc", label: "Mô tả", kind: "area" },
-                      { key: "imgUrl", label: "Ảnh", kind: "image", folder: "story" },
+                      { key: "imgUrl", label: "Ảnh", kind: "image", folder: "story", recommend: "800 x 600" },
                     ]}
                   />
                 </Card>
@@ -391,6 +396,7 @@ setContact(c ?? defaultContactContent);
                     items={product.products as unknown as Record<string, unknown>[]}
                     titleKey="name"
                     searchKeys={["name", "category", "origin", "desc"]}
+                    collapsible
                     onChange={(products) => setProduct({ ...product, products: products as unknown as ProductPageContent["products"] })}
                     newItem={(items) => ({
                       id: Math.max(0, ...items.map((i) => Number(i.id) || 0)) + 1,
@@ -433,6 +439,7 @@ setContact(c ?? defaultContactContent);
                     items={blog.posts as unknown as Record<string, unknown>[]}
                     titleKey="title"
                     searchKeys={["title", "topic", "excerpt"]}
+                    collapsible
                     onChange={(posts) => setBlog({ ...blog, posts: posts as unknown as BlogContent["posts"] })}
                     newItem={(items) => ({
                       id: Math.max(0, ...items.map((i) => Number(i.id) || 0)) + 1,

@@ -76,6 +76,7 @@ export type IndexContent = {
 export type StoryContent = {
   hero: HeroSection;
   goal?: string;
+  why?: { title?: string; body?: string };
   missions: { icon: string; title: string; desc: string }[];
   stats: StatItem[];
   services: { imgUrl?: string; label: string; title: string; desc: string }[];
@@ -177,6 +178,10 @@ export const defaultStoryContent: StoryContent = {
     imageUrl: storyImg,
   },
   goal: "Trở thành nhà cung ứng cà phê chất lượng tốt nhất và người đồng hành uy tín hàng đầu cho các đối tác là chuỗi và thương hiệu F&B tại Việt Nam.",
+  why: {
+    title: "Tại Sao Chọn TOBE?",
+    body: "TOBE tập trung phát triển vùng canh tác và chuẩn hóa quy trình sản xuất để giới thiệu đến đối tác — khách hàng hương vị cà phê tuyệt vời đến từ nông trại Lâm Đồng.",
+  },
   missions: [
     {
       icon: "🌍",
