@@ -15,6 +15,7 @@ import {
   defaultProductPageContent,
   defaultBlogContent,
   defaultContactContent,
+  getMapEmbedSrc,
   IndexContent,
   StoryContent,
   ProductPageContent,
@@ -488,8 +489,41 @@ setContact(c ?? defaultContactContent);
                   />
                 </Card>
                 <Card className="space-y-4 p-6">
-                  <h2 className="font-heading text-lg font-bold">Bản đồ</h2>
-                  <AdminArea label="Google Maps Embed URL" value={contact.mapEmbed ?? ""} onChange={(v) => setContact({ ...contact, mapEmbed: v })} />
+                  <h2 className="font-heading text-lg font-bold">Bản đồ (Google Maps)</h2>
+
+                  <div className="rounded-md border border-border bg-muted/40 p-4 text-sm text-muted-foreground space-y-1.5">
+                    <p className="font-medium text-foreground">Cách lấy bản đồ chuẩn:</p>
+                    <ol className="list-decimal space-y-1 pl-5">
+                      <li>Mở <span className="font-medium text-foreground">google.com/maps</span> và tìm địa chỉ của bạn.</li>
+                      <li>Bấm nút <span className="font-medium text-foreground">Chia sẻ</span> (Share).</li>
+                      <li>Chọn tab <span className="font-medium text-foreground">Nhúng bản đồ</span> (Embed a map).</li>
+                      <li>Bấm <span className="font-medium text-foreground">SAO CHÉP HTML</span> rồi dán vào ô bên dưới.</li>
+                    </ol>
+                    <p>Bạn có thể dán cả đoạn <code>&lt;iframe&gt;...&lt;/iframe&gt;</code> hoặc chỉ link <code>.../maps/embed?...</code> — hệ thống tự nhận diện.</p>
+                  </div>
+
+                  <AdminArea label="Mã nhúng / Link Google Maps" value={contact.mapEmbed ?? ""} onChange={(v) => setContact({ ...contact, mapEmbed: v })} />
+
+                  <div>
+                    <p className="mb-2 text-sm font-medium">Xem trước</p>
+                    <div className="overflow-hidden rounded-md border border-border bg-secondary">
+                      {getMapEmbedSrc(contact.mapEmbed) ? (
+                        <iframe
+                          title="Xem trước bản đồ"
+                          src={getMapEmbedSrc(contact.mapEmbed)}
+                          width="100%"
+                          height="300"
+                          style={{ border: 0 }}
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                        />
+                      ) : (
+                        <div className="flex h-[300px] items-center justify-center text-sm text-muted-foreground">
+                          Chưa có bản đồ để xem trước
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </Card>
                 <SaveBar page="contact" />
               </>

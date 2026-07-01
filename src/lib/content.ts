@@ -291,6 +291,24 @@ export const defaultContactContent: ContactContent = {
 
 export const formatPrice = (price: number) => price.toLocaleString("vi-VN") + "₫";
 
+/**
+ * Chuẩn hoá dữ liệu bản đồ mà admin dán vào. Chấp nhận:
+ * - Mã nhúng <iframe ... src="..."> đầy đủ (lấy phần src)
+ * - Link nhúng dạng https://www.google.com/maps/embed?pb=...
+ * - Link chia sẻ thường (https://maps.app.goo.gl/... hoặc .../maps/place/...)
+ * Trả về URL dùng được cho iframe, hoặc chuỗi rỗng nếu không hợp lệ.
+ */
+export const getMapEmbedSrc = (raw?: string): string => {
+  const input = (raw || "").trim();
+  if (!input) return "";
+
+  // Trường hợp dán cả đoạn <iframe ...>: trích src.
+  const iframeMatch = input.match(/src=["']([^"']+)["']/i);
+  if (iframeMatch) return iframeMatch[1];
+
+  return input;
+};
+
 export const getProductById = (products: ProductItem[], id: string) =>
   products.find((product) => product.id === id);
 

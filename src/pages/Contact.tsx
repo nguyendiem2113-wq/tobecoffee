@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { getPageContent } from "@/lib/supabase";
-import { ContactContent, defaultContactContent } from "@/lib/content";
+import { ContactContent, defaultContactContent, getMapEmbedSrc } from "@/lib/content";
 import {
   MapPin,
   Phone,
@@ -190,17 +190,23 @@ const Contact = () => {
           </div>
 
           {/* RIGHT - GOOGLE MAP */}
-          <div className="rounded-sm overflow-hidden border border-border">
-            <iframe
-              title="B'Lao Coffee"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125096.40989196904!2d107.67887321099633!3d11.532995680503024!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3173f7eb6431cb4d%3A0x77401a85c2d4756d!2zQidMYW8sIEzDom0gxJDhu5NuZywgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1781685885947!5m2!1svi!2s"
-              width="100%"
-              height="500"
-              style={{ border: 0 }}
-              loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+          <div className="rounded-sm overflow-hidden border border-border bg-secondary">
+            {getMapEmbedSrc(contactContent.mapEmbed) ? (
+              <iframe
+                title={contactContent.hero.title || "Bản đồ"}
+                src={getMapEmbedSrc(contactContent.mapEmbed)}
+                width="100%"
+                height="500"
+                style={{ border: 0 }}
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            ) : (
+              <div className="flex h-[500px] items-center justify-center text-sm text-muted-foreground">
+                Chưa có bản đồ
+              </div>
+            )}
           </div>
         </div>
       </section>
