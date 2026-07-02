@@ -488,41 +488,23 @@ setContact(c ?? defaultContactContent);
                     ]}
                   />
                 </Card>
-                <Card className="space-y-4 p-6">
-                  <h2 className="font-heading text-lg font-bold">Bản đồ (Google Maps)</h2>
-
+                <Card className="space-y-3 p-6">
+                  <h2 className="font-heading text-lg font-bold">Bản đồ</h2>
                   <div className="rounded-md border border-border bg-muted/40 p-4 text-sm text-muted-foreground space-y-1.5">
-                    <p className="font-medium text-foreground">Cách lấy bản đồ chuẩn:</p>
-                    <ol className="list-decimal space-y-1 pl-5">
-                      <li>Mở <span className="font-medium text-foreground">google.com/maps</span> và tìm địa chỉ của bạn.</li>
-                      <li>Bấm nút <span className="font-medium text-foreground">Chia sẻ</span> (Share).</li>
-                      <li>Chọn tab <span className="font-medium text-foreground">Nhúng bản đồ</span> (Embed a map).</li>
-                      <li>Bấm <span className="font-medium text-foreground">SAO CHÉP HTML</span> rồi dán vào ô bên dưới.</li>
-                    </ol>
-                    <p>Bạn có thể dán cả đoạn <code>&lt;iframe&gt;...&lt;/iframe&gt;</code> hoặc chỉ link <code>.../maps/embed?...</code> — hệ thống tự nhận diện.</p>
+                    <p className="font-medium text-foreground">Bản đồ hiển thị tự động ✨</p>
+                    <p>
+                      Không cần dán mã nhúng nữa. Bản đồ trên trang Liên hệ được tạo tự động từ
+                      dòng <span className="font-medium text-foreground">"Địa chỉ"</span> ở phần
+                      Thông tin liên hệ phía trên. Chỉ cần chỉnh sửa địa chỉ cho đúng là bản đồ,
+                      nút <span className="font-medium text-foreground">Chỉ đường</span> và
+                      <span className="font-medium text-foreground"> Mở Google Maps</span> sẽ hoạt động chính xác.
+                    </p>
                   </div>
-
-                  <AdminArea label="Mã nhúng / Link Google Maps" value={contact.mapEmbed ?? ""} onChange={(v) => setContact({ ...contact, mapEmbed: v })} />
-
-                  <div>
-                    <p className="mb-2 text-sm font-medium">Xem trước</p>
-                    <div className="overflow-hidden rounded-md border border-border bg-secondary">
-                      {getMapEmbedSrc(contact.mapEmbed) ? (
-                        <iframe
-                          title="Xem trước bản đồ"
-                          src={getMapEmbedSrc(contact.mapEmbed)}
-                          width="100%"
-                          height="300"
-                          style={{ border: 0 }}
-                          loading="lazy"
-                          referrerPolicy="no-referrer-when-downgrade"
-                        />
-                      ) : (
-                        <div className="flex h-[300px] items-center justify-center text-sm text-muted-foreground">
-                          Chưa có bản đồ để xem trước
-                        </div>
-                      )}
-                    </div>
+                  <div className="rounded-md border border-border bg-card p-4 text-sm">
+                    <span className="text-xs uppercase tracking-wider text-muted-foreground">Địa chỉ hiện tại</span>
+                    <p className="mt-1 font-medium">
+                      {contact.info.find((i) => i.label === "Địa chỉ")?.value || "Chưa có địa chỉ"}
+                    </p>
                   </div>
                 </Card>
                 <SaveBar page="contact" />
