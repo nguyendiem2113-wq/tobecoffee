@@ -15,7 +15,7 @@ import {
   defaultProductPageContent,
   defaultBlogContent,
   defaultContactContent,
-  getMapEmbedSrc,
+  
   IndexContent,
   StoryContent,
   ProductPageContent,
