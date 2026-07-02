@@ -214,6 +214,10 @@ export function RichTextEditor({ label, value, onChange, folder = "content", pla
           </label>
         </div>
         <EditorContent editor={editor} />
+        <div className="flex items-center justify-between border-t border-border bg-muted/30 px-4 py-2 text-xs text-muted-foreground">
+          <span>{wordCount} từ · {charCount} ký tự</span>
+          <span>~{Math.max(1, Math.ceil(wordCount / 200))} phút đọc</span>
+        </div>
       </div>
     </div>
   );
