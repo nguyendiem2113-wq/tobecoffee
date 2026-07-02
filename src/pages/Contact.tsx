@@ -190,25 +190,15 @@ const Contact = () => {
             </form>
           </div>
 
-          {/* RIGHT - GOOGLE MAP */}
-          <div className="rounded-sm overflow-hidden border border-border bg-secondary">
-            {getMapEmbedSrc(contactContent.mapEmbed) ? (
-              <iframe
-                title={contactContent.hero.title || "Bản đồ"}
-                src={getMapEmbedSrc(contactContent.mapEmbed)}
-                width="100%"
-                height="500"
-                style={{ border: 0 }}
-                loading="lazy"
-                allowFullScreen
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            ) : (
-              <div className="flex h-[500px] items-center justify-center text-sm text-muted-foreground">
-                Chưa có bản đồ
-              </div>
-            )}
-          </div>
+          {/* RIGHT - MAP (tĩnh, không nhúng iframe) */}
+          <StaticMap
+            address={
+              contactContent.info.find((i) => i.label === "Địa chỉ")?.value ||
+              "Bảo Lộc, Lâm Đồng, Việt Nam"
+            }
+            title="TOBE Coffee"
+            className="min-h-[500px]"
+          />
         </div>
       </section>
     </Layout>
