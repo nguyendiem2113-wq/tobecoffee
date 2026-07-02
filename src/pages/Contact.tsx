@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { getPageContent } from "@/lib/supabase";
-import { ContactContent, defaultContactContent, getMapEmbedSrc } from "@/lib/content";
+import { ContactContent, defaultContactContent } from "@/lib/content";
+import StaticMap from "@/components/StaticMap";
 import {
   MapPin,
   Phone,
