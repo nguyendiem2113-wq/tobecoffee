@@ -166,7 +166,7 @@ export function ListEditor<T extends Record<string, unknown>>({
                 </div>
               </div>
               {isOpen && (
-                <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-4 p-4 sm:grid-cols-2">
                   {fields.map((f) => {
                     const span = f.kind === "area" || f.kind === "image" || f.kind === "rich" || f.kind === "slug" ? "sm:col-span-2" : "";
                     return (
