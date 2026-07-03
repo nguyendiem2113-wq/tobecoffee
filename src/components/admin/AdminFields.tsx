@@ -50,7 +50,7 @@ export function AdminArea({
   return (
     <div className="space-y-1.5">
       <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</Label>
-      <Textarea value={value ?? ""} rows={rows} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} />
+      <Textarea value={value ?? ""} rows={rows} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} className="bg-background resize-y" />
     </div>
   );
 }
