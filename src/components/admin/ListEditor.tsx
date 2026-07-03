@@ -121,8 +121,8 @@ export function ListEditor<T extends Record<string, unknown>>({
           if (!matches(item)) return null;
           const isOpen = !collapsible || openIndices.has(index);
           return (
-            <Card key={index} className={isOpen ? "p-5" : "px-4 py-3"}>
-              <div className="flex items-center justify-between gap-2">
+            <Card key={index} className={`overflow-hidden transition-colors ${isOpen ? "border-primary/30 shadow-sm" : "hover:border-primary/20"}`}>
+              <div className={`flex items-center justify-between gap-2 ${isOpen ? "border-b border-border bg-muted/40 px-4 py-3" : "px-4 py-3"}`}>
                 <div className="flex items-center gap-2 min-w-0">
                   {collapsible && (
                     <Button
@@ -136,7 +136,10 @@ export function ListEditor<T extends Record<string, unknown>>({
                       {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                     </Button>
                   )}
-                  <span className="text-sm font-semibold text-muted-foreground truncate">
+                  <span className="flex h-6 min-w-6 items-center justify-center rounded-md bg-primary/10 px-1.5 text-xs font-bold text-primary shrink-0">
+                    {index + 1}
+                  </span>
+                  <span className="text-sm font-semibold text-foreground truncate">
                     {titleKey ? String(item[titleKey] ?? `#${index + 1}`) : `#${index + 1}`}
                   </span>
                   {!isOpen && searchKeys && searchKeys.slice(0, 2).map((k) =>
