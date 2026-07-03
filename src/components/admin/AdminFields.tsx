@@ -28,6 +28,7 @@ export function AdminField({
         value={value ?? ""}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
+        className="bg-background"
       />
     </div>
   );
