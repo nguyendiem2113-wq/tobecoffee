@@ -94,7 +94,7 @@ export function AdminImage({
         </p>
       )}
       <div className="flex items-start gap-3">
-        <div className="h-20 w-20 shrink-0 overflow-hidden rounded-md border border-border bg-secondary">
+        <div className="h-24 w-24 shrink-0 overflow-hidden rounded-lg border border-border bg-muted/50 shadow-sm">
           {value ? (
             <img
               src={value}
@@ -104,13 +104,14 @@ export function AdminImage({
               onError={() => setDims(null)}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-              <ImagePlus className="h-5 w-5" />
+            <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-muted-foreground">
+              <ImagePlus className="h-6 w-6" />
+              <span className="text-[10px]">Chưa có ảnh</span>
             </div>
           )}
         </div>
         <div className="flex-1 space-y-2">
-          <Input value={value ?? ""} placeholder="URL ảnh hoặc tải lên →" onChange={(e) => onChange(e.target.value)} />
+          <Input value={value ?? ""} placeholder="Dán URL ảnh hoặc bấm Tải ảnh →" onChange={(e) => onChange(e.target.value)} className="bg-background" />
           {value && dims && (
             <p className="text-xs text-muted-foreground">
               Ảnh hiện tại: <span className="font-medium text-foreground">{dims.w} x {dims.h} px</span>
