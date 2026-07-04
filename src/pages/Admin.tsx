@@ -89,6 +89,7 @@ const Admin = () => {
   const [product, setProduct] = useState<ProductPageContent>(defaultProductPageContent);
   const [blog, setBlog] = useState<BlogContent>(defaultBlogContent);
   const [contact, setContact] = useState<ContactContent>(defaultContactContent);
+  const [settings, setSettings] = useState<SiteSettings>(defaultSiteSettings);
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
