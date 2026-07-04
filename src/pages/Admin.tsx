@@ -95,12 +95,13 @@ const Admin = () => {
   useEffect(() => {
     if (!session || !isAdmin) return;
     (async () => {
-      const [h, s, p, b, c] = await Promise.all([
+      const [h, s, p, b, c, st] = await Promise.all([
         getPageContent<IndexContent>("index"),
         getPageContent<StoryContent>("story"),
         getPageContent<ProductPageContent>("product"),
         getPageContent<BlogContent>("blog"),
         getPageContent<ContactContent>("contact"),
+        getPageContent<SiteSettings>("settings"),
       ]);
 
       setHome(h ?? defaultIndexContent);
@@ -108,6 +109,7 @@ const Admin = () => {
       setProduct(p ?? defaultProductPageContent);
       setBlog(b ?? defaultBlogContent);
       setContact(c ?? defaultContactContent);
+      setSettings({ ...defaultSiteSettings, ...(st ?? {}) });
       const { data } = await supabase
         .from("contact_messages")
         .select("id, form_data, created_at, is_read")
