@@ -7,6 +7,7 @@ import {
   Loader2, LogOut, ExternalLink, Save, Trash2, Mail, MailOpen,
   Package, FileText, MessageSquare, LayoutDashboard, Home as HomeIcon,
   BookOpen, Phone, Menu, X, Image as ImageIcon, Sparkles, MapPin,
+  Search as SearchIcon,
 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { supabase, getPageContent, updatePageContent } from "@/lib/supabase";
@@ -19,14 +20,16 @@ import {
   defaultProductPageContent,
   defaultBlogContent,
   defaultContactContent,
+  defaultSiteSettings,
   IndexContent,
   StoryContent,
   ProductPageContent,
   BlogContent,
   ContactContent,
+  SiteSettings,
 } from "@/lib/content";
 
-type TabId = "dashboard" | "home" | "story" | "product" | "blog" | "contact" | "messages";
+type TabId = "dashboard" | "home" | "story" | "product" | "blog" | "contact" | "seo" | "messages";
 
 const tabs: { id: TabId; label: string; icon: typeof HomeIcon; desc: string }[] = [
   { id: "dashboard", label: "Tổng quan", icon: LayoutDashboard, desc: "Thống kê & truy cập nhanh" },
@@ -35,6 +38,7 @@ const tabs: { id: TabId; label: string; icon: typeof HomeIcon; desc: string }[] 
   { id: "product", label: "Sản phẩm", icon: Package, desc: "Danh sách sản phẩm" },
   { id: "blog", label: "Tin tức", icon: BookOpen, desc: "Bài viết & tin tức" },
   { id: "contact", label: "Liên hệ", icon: Phone, desc: "Thông tin liên hệ & bản đồ" },
+  { id: "seo", label: "SEO & Favicon", icon: SearchIcon, desc: "Tiêu đề, mô tả, favicon" },
   { id: "messages", label: "Tin nhắn", icon: MessageSquare, desc: "Tin nhắn từ khách hàng" },
 ];
 
@@ -85,17 +89,19 @@ const Admin = () => {
   const [product, setProduct] = useState<ProductPageContent>(defaultProductPageContent);
   const [blog, setBlog] = useState<BlogContent>(defaultBlogContent);
   const [contact, setContact] = useState<ContactContent>(defaultContactContent);
+  const [settings, setSettings] = useState<SiteSettings>(defaultSiteSettings);
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     if (!session || !isAdmin) return;
     (async () => {
-      const [h, s, p, b, c] = await Promise.all([
+      const [h, s, p, b, c, st] = await Promise.all([
         getPageContent<IndexContent>("index"),
         getPageContent<StoryContent>("story"),
         getPageContent<ProductPageContent>("product"),
         getPageContent<BlogContent>("blog"),
         getPageContent<ContactContent>("contact"),
+        getPageContent<SiteSettings>("settings"),
       ]);
 
       setHome(h ?? defaultIndexContent);
@@ -103,6 +109,7 @@ const Admin = () => {
       setProduct(p ?? defaultProductPageContent);
       setBlog(b ?? defaultBlogContent);
       setContact(c ?? defaultContactContent);
+      setSettings({ ...defaultSiteSettings, ...(st ?? {}) });
       const { data } = await supabase
         .from("contact_messages")
         .select("id, form_data, created_at, is_read")
@@ -157,8 +164,8 @@ const Admin = () => {
   };
 
   const save = async (page: TabId) => {
-    const map: Record<string, unknown> = { home, story, product, blog, contact };
-    const pageKey = page === "home" ? "index" : page;
+    const map: Record<string, unknown> = { home, story, product, blog, contact, seo: settings };
+    const pageKey = page === "home" ? "index" : page === "seo" ? "settings" : page;
     setSaving(true);
     const ok = await updatePageContent(pageKey, map[page]);
     setSaving(false);
@@ -593,6 +600,27 @@ const Admin = () => {
                   <SaveBar page="contact" />
                 </>
               )}
+
+              {/* SEO & FAVICON */}
+              {tab === "seo" && (
+                <>
+                  <Section icon={SearchIcon} title="Thẻ SEO" description="Tiêu đề và mô tả hiển thị trên Google, mạng xã hội">
+                    <AdminField label="Tiêu đề trang (title)" value={settings.siteTitle} onChange={(v) => setSettings({ ...settings, siteTitle: v })} />
+                    <p className="-mt-3 text-xs text-muted-foreground">Nên dưới 60 ký tự. Hiện tại: {settings.siteTitle.length} ký tự.</p>
+                    <AdminArea label="Mô tả (description)" value={settings.description} onChange={(v) => setSettings({ ...settings, description: v })} />
+                    <p className="-mt-3 text-xs text-muted-foreground">Nên dưới 160 ký tự. Hiện tại: {settings.description.length} ký tự.</p>
+                    <AdminField label="Từ khoá (keywords, ngăn cách bằng dấu phẩy)" value={settings.keywords ?? ""} onChange={(v) => setSettings({ ...settings, keywords: v })} />
+                  </Section>
+                  <Section icon={ImageIcon} title="Favicon" description="Biểu tượng nhỏ hiển thị trên tab trình duyệt">
+                    <AdminImage label="Favicon (khuyến nghị 512 x 512, PNG)" folder="settings" value={settings.faviconUrl} onChange={(v) => setSettings({ ...settings, faviconUrl: v })} />
+                  </Section>
+                  <Section icon={ImageIcon} title="Ảnh chia sẻ mạng xã hội (OG Image)" description="Ảnh hiển thị khi chia sẻ link lên Facebook, Zalo...">
+                    <AdminImage label="OG Image (khuyến nghị 1200 x 630)" folder="settings" value={settings.ogImageUrl} onChange={(v) => setSettings({ ...settings, ogImageUrl: v })} />
+                  </Section>
+                  <SaveBar page="seo" />
+                </>
+              )}
+
 
               {/* MESSAGES */}
               {tab === "messages" && (

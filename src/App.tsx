@@ -13,6 +13,7 @@ import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/admin/AdminLogin";
 import NotFound from "./pages/NotFound";
+import SiteMeta from "./components/SiteMeta";
 
 const queryClient = new QueryClient();
 
@@ -22,9 +23,10 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <SiteMeta />
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/story" element={<Story />} />``
+          <Route path="/story" element={<Story />} />
           <Route path="/product" element={<Product />} />
           <Route path="/product/:category" element={<Product />} />
           <Route path="/product/detail/:id" element={<ProductDetail />} />
