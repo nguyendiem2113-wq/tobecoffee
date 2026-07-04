@@ -19,11 +19,13 @@ import {
   defaultProductPageContent,
   defaultBlogContent,
   defaultContactContent,
+  defaultSiteSettings,
   IndexContent,
   StoryContent,
   ProductPageContent,
   BlogContent,
   ContactContent,
+  SiteSettings,
 } from "@/lib/content";
 
 type TabId = "dashboard" | "home" | "story" | "product" | "blog" | "contact" | "messages";
