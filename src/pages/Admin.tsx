@@ -164,8 +164,8 @@ const Admin = () => {
   };
 
   const save = async (page: TabId) => {
-    const map: Record<string, unknown> = { home, story, product, blog, contact };
-    const pageKey = page === "home" ? "index" : page;
+    const map: Record<string, unknown> = { home, story, product, blog, contact, seo: settings };
+    const pageKey = page === "home" ? "index" : page === "seo" ? "settings" : page;
     setSaving(true);
     const ok = await updatePageContent(pageKey, map[page]);
     setSaving(false);
