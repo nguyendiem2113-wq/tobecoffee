@@ -7,6 +7,7 @@ import {
   Loader2, LogOut, ExternalLink, Save, Trash2, Mail, MailOpen,
   Package, FileText, MessageSquare, LayoutDashboard, Home as HomeIcon,
   BookOpen, Phone, Menu, X, Image as ImageIcon, Sparkles, MapPin,
+  Search as SearchIcon,
 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { supabase, getPageContent, updatePageContent } from "@/lib/supabase";
