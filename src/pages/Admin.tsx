@@ -601,6 +601,27 @@ const Admin = () => {
                 </>
               )}
 
+              {/* SEO & FAVICON */}
+              {tab === "seo" && (
+                <>
+                  <Section icon={SearchIcon} title="Thẻ SEO" description="Tiêu đề và mô tả hiển thị trên Google, mạng xã hội">
+                    <AdminField label="Tiêu đề trang (title)" value={settings.siteTitle} onChange={(v) => setSettings({ ...settings, siteTitle: v })} />
+                    <p className="-mt-3 text-xs text-muted-foreground">Nên dưới 60 ký tự. Hiện tại: {settings.siteTitle.length} ký tự.</p>
+                    <AdminArea label="Mô tả (description)" value={settings.description} onChange={(v) => setSettings({ ...settings, description: v })} />
+                    <p className="-mt-3 text-xs text-muted-foreground">Nên dưới 160 ký tự. Hiện tại: {settings.description.length} ký tự.</p>
+                    <AdminField label="Từ khoá (keywords, ngăn cách bằng dấu phẩy)" value={settings.keywords ?? ""} onChange={(v) => setSettings({ ...settings, keywords: v })} />
+                  </Section>
+                  <Section icon={ImageIcon} title="Favicon" description="Biểu tượng nhỏ hiển thị trên tab trình duyệt">
+                    <AdminImage label="Favicon (khuyến nghị 512 x 512, PNG)" folder="settings" value={settings.faviconUrl} onChange={(v) => setSettings({ ...settings, faviconUrl: v })} />
+                  </Section>
+                  <Section icon={ImageIcon} title="Ảnh chia sẻ mạng xã hội (OG Image)" description="Ảnh hiển thị khi chia sẻ link lên Facebook, Zalo...">
+                    <AdminImage label="OG Image (khuyến nghị 1200 x 630)" folder="settings" value={settings.ogImageUrl} onChange={(v) => setSettings({ ...settings, ogImageUrl: v })} />
+                  </Section>
+                  <SaveBar page="seo" />
+                </>
+              )}
+
+
               {/* MESSAGES */}
               {tab === "messages" && (
                 <Section icon={MessageSquare} title={`Tin nhắn liên hệ (${messages.length})`} description={unreadCount > 0 ? `${unreadCount} tin chưa đọc` : "Tất cả đã đọc"}>
