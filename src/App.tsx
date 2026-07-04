@@ -23,6 +23,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <SiteMeta />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/story" element={<Story />} />``
