@@ -289,6 +289,23 @@ export const defaultContactContent: ContactContent = {
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3903.8!2d107.8112!3d11.5479!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3173f7a!2sKCN+B%27Lao!5e0!3m2!1svi!2svn!4v1700000000000",
 };
 
+export type SiteSettings = {
+  siteTitle: string;
+  description: string;
+  keywords?: string;
+  faviconUrl?: string;
+  ogImageUrl?: string;
+};
+
+export const defaultSiteSettings: SiteSettings = {
+  siteTitle: "Tobe Coffee | Cà phê nguyên chất Việt Nam",
+  description:
+    "Tobe Coffee - Cà phê Việt Nam nguyên chất, rang xay chất lượng cao. Trải nghiệm hương vị đậm đà, chuẩn gu người Việt.",
+  keywords: "cà phê, cà phê nguyên chất, tobe coffee, cà phê Việt Nam, cà phê rang xay",
+  faviconUrl: "/thumbnails.jpg",
+  ogImageUrl: "https://www.tobecoffee.vn/thumbnails.jpg",
+};
+
 export const formatPrice = (price: number) => price.toLocaleString("vi-VN") + "₫";
 
 /**
