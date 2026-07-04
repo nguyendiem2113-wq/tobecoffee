@@ -29,7 +29,7 @@ import {
   SiteSettings,
 } from "@/lib/content";
 
-type TabId = "dashboard" | "home" | "story" | "product" | "blog" | "contact" | "messages";
+type TabId = "dashboard" | "home" | "story" | "product" | "blog" | "contact" | "seo" | "messages";
 
 const tabs: { id: TabId; label: string; icon: typeof HomeIcon; desc: string }[] = [
   { id: "dashboard", label: "Tổng quan", icon: LayoutDashboard, desc: "Thống kê & truy cập nhanh" },
@@ -38,6 +38,7 @@ const tabs: { id: TabId; label: string; icon: typeof HomeIcon; desc: string }[] 
   { id: "product", label: "Sản phẩm", icon: Package, desc: "Danh sách sản phẩm" },
   { id: "blog", label: "Tin tức", icon: BookOpen, desc: "Bài viết & tin tức" },
   { id: "contact", label: "Liên hệ", icon: Phone, desc: "Thông tin liên hệ & bản đồ" },
+  { id: "seo", label: "SEO & Favicon", icon: SearchIcon, desc: "Tiêu đề, mô tả, favicon" },
   { id: "messages", label: "Tin nhắn", icon: MessageSquare, desc: "Tin nhắn từ khách hàng" },
 ];
 
