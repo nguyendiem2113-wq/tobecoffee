@@ -26,7 +26,7 @@ const App = () => (
         <SiteMeta />
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/story" element={<Story />} />``
+          <Route path="/story" element={<Story />} />
           <Route path="/product" element={<Product />} />
           <Route path="/product/:category" element={<Product />} />
           <Route path="/product/detail/:id" element={<ProductDetail />} />
