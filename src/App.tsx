@@ -13,6 +13,7 @@ import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/admin/AdminLogin";
 import NotFound from "./pages/NotFound";
+import SiteMeta from "./components/SiteMeta";
 
 const queryClient = new QueryClient();
 
