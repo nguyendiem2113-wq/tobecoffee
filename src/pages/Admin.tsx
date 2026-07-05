@@ -7,12 +7,13 @@ import {
   Loader2, LogOut, ExternalLink, Save, Trash2, Mail, MailOpen,
   Package, FileText, MessageSquare, LayoutDashboard, Home as HomeIcon,
   BookOpen, Phone, Menu, X, Image as ImageIcon, Sparkles, MapPin,
-  Search as SearchIcon,
+  Search as SearchIcon, RefreshCw, LifeBuoy,
 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { supabase, getPageContent, updatePageContent } from "@/lib/supabase";
+import { supabase, getPageContent, updatePageContent, refreshAllCache } from "@/lib/supabase";
 import { AdminField, AdminArea, AdminImage } from "@/components/admin/AdminFields";
 import { ListEditor } from "@/components/admin/ListEditor";
+import { AdminGuide } from "@/components/admin/AdminGuide";
 import { Switch } from "@/components/ui/switch";
 import {
   defaultIndexContent,
