@@ -691,6 +691,9 @@ const Admin = () => {
                   )}
                 </Section>
               )}
+
+              {/* GUIDE */}
+              {tab === "guide" && <AdminGuide />}
             </div>
           )}
         </main>
