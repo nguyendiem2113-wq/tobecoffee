@@ -116,3 +116,88 @@ export async function updatePageContent(
     return false;
   }
 }
+
+/** Xoá toàn bộ cache nội dung cục bộ. */
+export function clearContentCache() {
+  try {
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith(CACHE_PREFIX))
+      .forEach((k) => localStorage.removeItem(k));
+  } catch {
+    /* bỏ qua */
+  }
+}
+
+/** Kiểm tra Supabase còn kết nối / hoạt động (không bị paused) hay không. */
+export async function checkConnection(): Promise<boolean> {
+  try {
+    const { error } = await withTimeout(
+      supabase.from("page_contents").select("page").limit(1),
+      REQUEST_TIMEOUT_MS
+    );
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Tải mới toàn bộ nội dung trực tiếp từ Supabase (bỏ qua cache) và ghi đè cache.
+ * Trả về true nếu làm mới được ít nhất một trang.
+ */
+export async function refreshAllCache(
+  pages: readonly string[] = CMS_PAGES
+): Promise<boolean> {
+  let refreshed = false;
+  await Promise.all(
+    pages.map(async (p) => {
+      try {
+        const { data, error } = await withTimeout(
+          supabase.from("page_contents").select("content").eq("page", p).maybeSingle(),
+          REQUEST_TIMEOUT_MS
+        );
+        if (!error && data?.content) {
+          writeCache(p, data.content);
+          refreshed = true;
+        }
+      } catch {
+        /* bỏ qua trang lỗi */
+      }
+    })
+  );
+  return refreshed;
+}
+
+/**
+ * Tự động làm mới cache khi kết nối mạng/Supabase hoạt động trở lại.
+ * - Lắng nghe sự kiện trình duyệt "online".
+ * - Định kỳ kiểm tra kết nối để bắt trường hợp Supabase được bật lại (unpause).
+ * Trả về hàm huỷ đăng ký.
+ */
+export function setupAutoRefresh(
+  onRefreshed?: () => void,
+  intervalMs = 60000
+): () => void {
+  let busy = false;
+  const run = async () => {
+    if (busy) return;
+    busy = true;
+    try {
+      if (await checkConnection()) {
+        const ok = await refreshAllCache();
+        if (ok) onRefreshed?.();
+      }
+    } finally {
+      busy = false;
+    }
+  };
+
+  const onOnline = () => void run();
+  window.addEventListener("online", onOnline);
+  const timer = window.setInterval(() => void run(), intervalMs);
+
+  return () => {
+    window.removeEventListener("online", onOnline);
+    window.clearInterval(timer);
+  };
+}
