@@ -7,6 +7,9 @@ export { supabase };
 const CACHE_PREFIX = "tobe:page:";
 const REQUEST_TIMEOUT_MS = 8000;
 
+/** Các trang CMS được cache & làm mới tự động. */
+export const CMS_PAGES = ["index", "story", "product", "blog", "contact", "settings"] as const;
+
 /** Bọc một promise với timeout để tránh treo khi Supabase bị tạm dừng (paused). */
 function withTimeout<T>(promise: PromiseLike<T>, ms: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
