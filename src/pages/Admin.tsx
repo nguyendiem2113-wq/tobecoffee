@@ -7,12 +7,13 @@ import {
   Loader2, LogOut, ExternalLink, Save, Trash2, Mail, MailOpen,
   Package, FileText, MessageSquare, LayoutDashboard, Home as HomeIcon,
   BookOpen, Phone, Menu, X, Image as ImageIcon, Sparkles, MapPin,
-  Search as SearchIcon,
+  Search as SearchIcon, RefreshCw, LifeBuoy,
 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { supabase, getPageContent, updatePageContent } from "@/lib/supabase";
+import { supabase, getPageContent, updatePageContent, refreshAllCache } from "@/lib/supabase";
 import { AdminField, AdminArea, AdminImage } from "@/components/admin/AdminFields";
 import { ListEditor } from "@/components/admin/ListEditor";
+import { AdminGuide } from "@/components/admin/AdminGuide";
 import { Switch } from "@/components/ui/switch";
 import {
   defaultIndexContent,
@@ -29,7 +30,7 @@ import {
   SiteSettings,
 } from "@/lib/content";
 
-type TabId = "dashboard" | "home" | "story" | "product" | "blog" | "contact" | "seo" | "messages";
+type TabId = "dashboard" | "home" | "story" | "product" | "blog" | "contact" | "seo" | "messages" | "guide";
 
 const tabs: { id: TabId; label: string; icon: typeof HomeIcon; desc: string }[] = [
   { id: "dashboard", label: "Tổng quan", icon: LayoutDashboard, desc: "Thống kê & truy cập nhanh" },
@@ -40,6 +41,7 @@ const tabs: { id: TabId; label: string; icon: typeof HomeIcon; desc: string }[] 
   { id: "contact", label: "Liên hệ", icon: Phone, desc: "Thông tin liên hệ & bản đồ" },
   { id: "seo", label: "SEO & Favicon", icon: SearchIcon, desc: "Tiêu đề, mô tả, favicon" },
   { id: "messages", label: "Tin nhắn", icon: MessageSquare, desc: "Tin nhắn từ khách hàng" },
+  { id: "guide", label: "Hướng dẫn", icon: LifeBuoy, desc: "Cách dùng website & /admin" },
 ];
 
 interface Message {
@@ -82,6 +84,7 @@ const Admin = () => {
   const [tab, setTab] = useState<TabId>("dashboard");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
 
   const [home, setHome] = useState<IndexContent>(defaultIndexContent);
@@ -92,32 +95,47 @@ const Admin = () => {
   const [settings, setSettings] = useState<SiteSettings>(defaultSiteSettings);
   const [messages, setMessages] = useState<Message[]>([]);
 
+  const loadContent = async () => {
+    const [h, s, p, b, c, st] = await Promise.all([
+      getPageContent<IndexContent>("index"),
+      getPageContent<StoryContent>("story"),
+      getPageContent<ProductPageContent>("product"),
+      getPageContent<BlogContent>("blog"),
+      getPageContent<ContactContent>("contact"),
+      getPageContent<SiteSettings>("settings"),
+    ]);
+
+    setHome(h ?? defaultIndexContent);
+    setStory(s ?? defaultStoryContent);
+    setProduct(p ?? defaultProductPageContent);
+    setBlog(b ?? defaultBlogContent);
+    setContact(c ?? defaultContactContent);
+    setSettings({ ...defaultSiteSettings, ...(st ?? {}) });
+    const { data } = await supabase
+      .from("contact_messages")
+      .select("id, form_data, created_at, is_read")
+      .order("created_at", { ascending: false });
+    setMessages((data as unknown as Message[]) || []);
+  };
+
   useEffect(() => {
     if (!session || !isAdmin) return;
     (async () => {
-      const [h, s, p, b, c, st] = await Promise.all([
-        getPageContent<IndexContent>("index"),
-        getPageContent<StoryContent>("story"),
-        getPageContent<ProductPageContent>("product"),
-        getPageContent<BlogContent>("blog"),
-        getPageContent<ContactContent>("contact"),
-        getPageContent<SiteSettings>("settings"),
-      ]);
-
-      setHome(h ?? defaultIndexContent);
-      setStory(s ?? defaultStoryContent);
-      setProduct(p ?? defaultProductPageContent);
-      setBlog(b ?? defaultBlogContent);
-      setContact(c ?? defaultContactContent);
-      setSettings({ ...defaultSiteSettings, ...(st ?? {}) });
-      const { data } = await supabase
-        .from("contact_messages")
-        .select("id, form_data, created_at, is_read")
-        .order("created_at", { ascending: false });
-      setMessages((data as unknown as Message[]) || []);
+      await loadContent();
       setLoading(false);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, isAdmin]);
+
+  const refreshData = async () => {
+    setRefreshing(true);
+    const ok = await refreshAllCache();
+    await loadContent();
+    setRefreshing(false);
+    if (ok) toast.success("Đã làm mới dữ liệu mới nhất");
+    else toast.error("Không kết nối được máy chủ, đang dùng dữ liệu đã lưu");
+  };
+
 
   if (authLoading) {
     return (
@@ -251,6 +269,17 @@ const Admin = () => {
               <NavItems />
             </div>
             <div className="border-t border-border p-3">
+              <Button
+                variant="outline"
+                size="sm"
+                className="mb-2 w-full"
+                onClick={refreshData}
+                disabled={refreshing}
+                title="Tải lại dữ liệu mới nhất từ máy chủ"
+              >
+                <RefreshCw className={`mr-1.5 h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+                {refreshing ? "Đang làm mới..." : "Làm mới dữ liệu"}
+              </Button>
               <div className="mb-2 truncate px-3 text-xs text-muted-foreground" title={session.user.email ?? ""}>
                 {session.user.email}
               </div>
@@ -662,6 +691,9 @@ const Admin = () => {
                   )}
                 </Section>
               )}
+
+              {/* GUIDE */}
+              {tab === "guide" && <AdminGuide />}
             </div>
           )}
         </main>
