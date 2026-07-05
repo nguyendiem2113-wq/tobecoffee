@@ -269,6 +269,17 @@ const Admin = () => {
               <NavItems />
             </div>
             <div className="border-t border-border p-3">
+              <Button
+                variant="outline"
+                size="sm"
+                className="mb-2 w-full"
+                onClick={refreshData}
+                disabled={refreshing}
+                title="Tải lại dữ liệu mới nhất từ máy chủ"
+              >
+                <RefreshCw className={`mr-1.5 h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+                {refreshing ? "Đang làm mới..." : "Làm mới dữ liệu"}
+              </Button>
               <div className="mb-2 truncate px-3 text-xs text-muted-foreground" title={session.user.email ?? ""}>
                 {session.user.email}
               </div>
