@@ -19,7 +19,14 @@ import { setupAutoRefresh } from "@/lib/supabase";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  useEffect(() => {
+    // Tự động làm mới cache khi kết nối trở lại để dữ liệu không bị cũ.
+    const cleanup = setupAutoRefresh();
+    return cleanup;
+  }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
