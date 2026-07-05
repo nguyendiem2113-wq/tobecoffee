@@ -84,6 +84,7 @@ const Admin = () => {
   const [tab, setTab] = useState<TabId>("dashboard");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
 
   const [home, setHome] = useState<IndexContent>(defaultIndexContent);
@@ -94,32 +95,47 @@ const Admin = () => {
   const [settings, setSettings] = useState<SiteSettings>(defaultSiteSettings);
   const [messages, setMessages] = useState<Message[]>([]);
 
+  const loadContent = async () => {
+    const [h, s, p, b, c, st] = await Promise.all([
+      getPageContent<IndexContent>("index"),
+      getPageContent<StoryContent>("story"),
+      getPageContent<ProductPageContent>("product"),
+      getPageContent<BlogContent>("blog"),
+      getPageContent<ContactContent>("contact"),
+      getPageContent<SiteSettings>("settings"),
+    ]);
+
+    setHome(h ?? defaultIndexContent);
+    setStory(s ?? defaultStoryContent);
+    setProduct(p ?? defaultProductPageContent);
+    setBlog(b ?? defaultBlogContent);
+    setContact(c ?? defaultContactContent);
+    setSettings({ ...defaultSiteSettings, ...(st ?? {}) });
+    const { data } = await supabase
+      .from("contact_messages")
+      .select("id, form_data, created_at, is_read")
+      .order("created_at", { ascending: false });
+    setMessages((data as unknown as Message[]) || []);
+  };
+
   useEffect(() => {
     if (!session || !isAdmin) return;
     (async () => {
-      const [h, s, p, b, c, st] = await Promise.all([
-        getPageContent<IndexContent>("index"),
-        getPageContent<StoryContent>("story"),
-        getPageContent<ProductPageContent>("product"),
-        getPageContent<BlogContent>("blog"),
-        getPageContent<ContactContent>("contact"),
-        getPageContent<SiteSettings>("settings"),
-      ]);
-
-      setHome(h ?? defaultIndexContent);
-      setStory(s ?? defaultStoryContent);
-      setProduct(p ?? defaultProductPageContent);
-      setBlog(b ?? defaultBlogContent);
-      setContact(c ?? defaultContactContent);
-      setSettings({ ...defaultSiteSettings, ...(st ?? {}) });
-      const { data } = await supabase
-        .from("contact_messages")
-        .select("id, form_data, created_at, is_read")
-        .order("created_at", { ascending: false });
-      setMessages((data as unknown as Message[]) || []);
+      await loadContent();
       setLoading(false);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, isAdmin]);
+
+  const refreshData = async () => {
+    setRefreshing(true);
+    const ok = await refreshAllCache();
+    await loadContent();
+    setRefreshing(false);
+    if (ok) toast.success("Đã làm mới dữ liệu mới nhất");
+    else toast.error("Không kết nối được máy chủ, đang dùng dữ liệu đã lưu");
+  };
+
 
   if (authLoading) {
     return (
