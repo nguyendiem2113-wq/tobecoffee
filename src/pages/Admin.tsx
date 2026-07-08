@@ -128,7 +128,22 @@ const Admin = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, isAdmin]);
 
-  const refreshData = async () => {
+  useEffect(() => {
+    if (!session || !isAdmin) return;
+    let active = true;
+    const check = async () => {
+      const ok = await checkConnection();
+      if (active) setOnline(ok);
+    };
+    check();
+    const timer = window.setInterval(check, 60000);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
+  }, [session, isAdmin]);
+
+
     setRefreshing(true);
     const ok = await refreshAllCache();
     await loadContent();
