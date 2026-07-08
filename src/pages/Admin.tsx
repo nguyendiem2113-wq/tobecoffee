@@ -10,7 +10,7 @@ import {
   Search as SearchIcon, RefreshCw, LifeBuoy,
 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { supabase, getPageContent, updatePageContent, refreshAllCache } from "@/lib/supabase";
+import { supabase, getPageContent, updatePageContent, refreshAllCache, checkConnection } from "@/lib/supabase";
 import { AdminField, AdminArea, AdminImage } from "@/components/admin/AdminFields";
 import { ListEditor } from "@/components/admin/ListEditor";
 import { AdminGuide } from "@/components/admin/AdminGuide";
@@ -86,6 +86,7 @@ const Admin = () => {
   const [saving, setSaving] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
+  const [online, setOnline] = useState<boolean | null>(null);
 
   const [home, setHome] = useState<IndexContent>(defaultIndexContent);
   const [story, setStory] = useState<StoryContent>(defaultStoryContent);
@@ -125,6 +126,21 @@ const Admin = () => {
       setLoading(false);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, isAdmin]);
+
+  useEffect(() => {
+    if (!session || !isAdmin) return;
+    let active = true;
+    const check = async () => {
+      const ok = await checkConnection();
+      if (active) setOnline(ok);
+    };
+    check();
+    const timer = window.setInterval(check, 60000);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
   }, [session, isAdmin]);
 
   const refreshData = async () => {
@@ -269,6 +285,21 @@ const Admin = () => {
               <NavItems />
             </div>
             <div className="border-t border-border p-3">
+              <div className="mb-2 flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2 text-xs">
+                <span
+                  className={`h-2 w-2 shrink-0 rounded-full ${
+                    online === null
+                      ? "bg-muted-foreground animate-pulse"
+                      : online
+                      ? "bg-emerald-500"
+                      : "bg-destructive"
+                  }`}
+                />
+                <span className="text-muted-foreground">
+                  {online === null ? "Đang kiểm tra máy chủ…" : online ? "Máy chủ hoạt động" : "Mất kết nối máy chủ"}
+                </span>
+              </div>
+
               <Button
                 variant="outline"
                 size="sm"
