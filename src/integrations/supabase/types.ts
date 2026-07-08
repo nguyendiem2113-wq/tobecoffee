@@ -161,6 +161,21 @@ export type Database = {
         }
         Relationships: []
       }
+      keepalive: {
+        Row: {
+          id: boolean
+          last_ping: string
+        }
+        Insert: {
+          id?: boolean
+          last_ping?: string
+        }
+        Update: {
+          id?: boolean
+          last_ping?: string
+        }
+        Relationships: []
+      }
       page_contents: {
         Row: {
           content: Json
@@ -254,6 +269,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      touch_keepalive: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "user"
