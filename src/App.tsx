@@ -22,8 +22,13 @@ const queryClient = new QueryClient();
 const App = () => {
   useEffect(() => {
     // Tự động làm mới cache khi kết nối trở lại để dữ liệu không bị cũ.
-    const cleanup = setupAutoRefresh();
-    return cleanup;
+    const stopRefresh = setupAutoRefresh();
+    // Giữ Supabase luôn "thức" để không bị pause khi thiếu tương tác.
+    const stopKeepAlive = setupKeepAlive();
+    return () => {
+      stopRefresh();
+      stopKeepAlive();
+    };
   }, []);
 
   return (
