@@ -169,6 +169,42 @@ export async function refreshAllCache(
 }
 
 /**
+ * Gửi một truy vấn siêu nhẹ tới bảng "keepalive" để giữ cho dự án Supabase
+ * luôn hoạt động (không bị pause vì thiếu tương tác). Kết hợp với tác vụ
+ * cron chạy hằng ngày trên máy chủ, website sẽ không bao giờ bị lỗi tải
+ * dữ liệu do database ngủ.
+ */
+export async function pingKeepAlive(): Promise<boolean> {
+  try {
+    const { error } = await withTimeout(
+      supabase.from("keepalive").select("last_ping").limit(1),
+      REQUEST_TIMEOUT_MS
+    );
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Định kỳ "đánh thức" Supabase trong khi người dùng còn mở website.
+ * Trả về hàm huỷ đăng ký.
+ */
+export function setupKeepAlive(intervalMs = 5 * 60 * 1000): () => void {
+  void pingKeepAlive();
+  const onVisible = () => {
+    if (document.visibilityState === "visible") void pingKeepAlive();
+  };
+  document.addEventListener("visibilitychange", onVisible);
+  const timer = window.setInterval(() => void pingKeepAlive(), intervalMs);
+  return () => {
+    document.removeEventListener("visibilitychange", onVisible);
+    window.clearInterval(timer);
+  };
+}
+
+
+/**
  * Tự động làm mới cache khi kết nối mạng/Supabase hoạt động trở lại.
  * - Lắng nghe sự kiện trình duyệt "online".
  * - Định kỳ kiểm tra kết nối để bắt trường hợp Supabase được bật lại (unpause).
