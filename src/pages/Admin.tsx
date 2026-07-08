@@ -285,6 +285,21 @@ const Admin = () => {
               <NavItems />
             </div>
             <div className="border-t border-border p-3">
+              <div className="mb-2 flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2 text-xs">
+                <span
+                  className={`h-2 w-2 shrink-0 rounded-full ${
+                    online === null
+                      ? "bg-muted-foreground animate-pulse"
+                      : online
+                      ? "bg-emerald-500"
+                      : "bg-destructive"
+                  }`}
+                />
+                <span className="text-muted-foreground">
+                  {online === null ? "Đang kiểm tra máy chủ…" : online ? "Máy chủ hoạt động" : "Mất kết nối máy chủ"}
+                </span>
+              </div>
+
               <Button
                 variant="outline"
                 size="sm"
