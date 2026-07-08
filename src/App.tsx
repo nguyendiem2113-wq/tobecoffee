@@ -15,7 +15,7 @@ import Admin from "./pages/Admin";
 import AdminLogin from "./pages/admin/AdminLogin";
 import NotFound from "./pages/NotFound";
 import SiteMeta from "./components/SiteMeta";
-import { setupAutoRefresh } from "@/lib/supabase";
+import { setupAutoRefresh, setupKeepAlive } from "@/lib/supabase";
 
 const queryClient = new QueryClient();
 
