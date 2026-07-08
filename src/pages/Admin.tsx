@@ -86,6 +86,7 @@ const Admin = () => {
   const [saving, setSaving] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
+  const [online, setOnline] = useState<boolean | null>(null);
 
   const [home, setHome] = useState<IndexContent>(defaultIndexContent);
   const [story, setStory] = useState<StoryContent>(defaultStoryContent);
