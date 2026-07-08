@@ -10,7 +10,7 @@ import {
   Search as SearchIcon, RefreshCw, LifeBuoy,
 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { supabase, getPageContent, updatePageContent, refreshAllCache } from "@/lib/supabase";
+import { supabase, getPageContent, updatePageContent, refreshAllCache, checkConnection } from "@/lib/supabase";
 import { AdminField, AdminArea, AdminImage } from "@/components/admin/AdminFields";
 import { ListEditor } from "@/components/admin/ListEditor";
 import { AdminGuide } from "@/components/admin/AdminGuide";
