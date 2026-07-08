@@ -143,7 +143,7 @@ const Admin = () => {
     };
   }, [session, isAdmin]);
 
-
+  const refreshData = async () => {
     setRefreshing(true);
     const ok = await refreshAllCache();
     await loadContent();
